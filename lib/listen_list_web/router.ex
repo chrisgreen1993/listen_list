@@ -17,7 +17,7 @@ defmodule ListenListWeb.Router do
   scope "/", ListenListWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", ReleaseLive.Index, :index
   end
 
   # Other scopes may use custom stacks.
