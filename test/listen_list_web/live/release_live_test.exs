@@ -4,10 +4,6 @@ defmodule ListenListWeb.ReleaseLiveTest do
   import Phoenix.LiveViewTest
   import ListenList.MusicFixtures
 
-  @create_attrs %{type: "some type", title: "some title", url: "some url"}
-  @update_attrs %{type: "some updated type", title: "some updated title", url: "some updated url"}
-  @invalid_attrs %{type: nil, title: nil, url: nil}
-
   defp create_release(_) do
     release = release_fixture()
     %{release: release}
