@@ -8,7 +8,7 @@ defmodule ListenList.MusicTest do
 
     import ListenList.MusicFixtures
 
-    @invalid_attrs %{type: nil, title: nil, url: nil}
+    @invalid_attrs %{title: nil, url: nil}
 
     test "list_releases/0 returns all releases" do
       release = release_fixture()
@@ -21,10 +21,16 @@ defmodule ListenList.MusicTest do
     end
 
     test "create_release/1 with valid data creates a release" do
-      valid_attrs = %{type: "some type", title: "some title", url: "some url"}
+      valid_attrs = %{
+        title: "some title",
+        url: "some url",
+        reddit_id: "some reddit_id",
+        score: 1,
+        permalink: "some permalink",
+        post_raw: %{}
+      }
 
       assert {:ok, %Release{} = release} = Music.create_release(valid_attrs)
-      assert release.type == "some type"
       assert release.title == "some title"
       assert release.url == "some url"
     end
@@ -35,10 +41,9 @@ defmodule ListenList.MusicTest do
 
     test "update_release/2 with valid data updates the release" do
       release = release_fixture()
-      update_attrs = %{type: "some updated type", title: "some updated title", url: "some updated url"}
+      update_attrs = %{title: "some updated title", url: "some updated url"}
 
       assert {:ok, %Release{} = release} = Music.update_release(release, update_attrs)
-      assert release.type == "some updated type"
       assert release.title == "some updated title"
       assert release.url == "some updated url"
     end

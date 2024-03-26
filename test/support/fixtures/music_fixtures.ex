@@ -12,8 +12,11 @@ defmodule ListenList.MusicFixtures do
       attrs
       |> Enum.into(%{
         title: "some title",
-        type: "some type",
-        url: "some url"
+        url: "some url",
+        reddit_id: "some reddit_id",
+        score: 1,
+        permalink: "some permalink",
+        post_raw: %{}
       })
       |> ListenList.Music.create_release()
 

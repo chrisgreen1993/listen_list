@@ -9,7 +9,7 @@ import Config
 
 config :listen_list,
   ecto_repos: [ListenList.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime_usec]
 
 # Configures the endpoint
 config :listen_list, ListenListWeb.Endpoint,

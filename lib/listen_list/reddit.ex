@@ -4,10 +4,11 @@ defmodule ListenList.Reddit do
   """
 
   alias HTTPoison
+  require Logger
 
 
   @post_data_key_map %{
-    "id" => "external_id",
+    "id" => "reddit_id",
     "title" => "title",
     "url" => "url",
     "score" => "score",
@@ -32,10 +33,10 @@ defmodule ListenList.Reddit do
         Enum.map(posts, &parse_post/1)
 
       {:ok, %{status_code: status_code}} ->
-        {:error, "HTTP request failed with status code #{status_code}"}
+        Logger.error("HTTP request failed with status code #{status_code}")
 
       {:error, reason} ->
-        {:error, reason}
+        Logger.error("HTTP request failed with reason #{inspect(reason)}")
     end
   end
 

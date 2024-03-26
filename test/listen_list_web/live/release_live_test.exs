@@ -16,7 +16,7 @@ defmodule ListenListWeb.ReleaseLiveTest do
       {:ok, _index_live, html} = live(conn, ~p"/")
 
       assert html =~ "Listing Releases"
-      assert html =~ release.type
+      assert html =~ release.title
     end
   end
 end

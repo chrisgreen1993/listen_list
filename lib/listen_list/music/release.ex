@@ -3,17 +3,21 @@ defmodule ListenList.Music.Release do
   import Ecto.Changeset
 
   schema "releases" do
-    field :type, :string
     field :title, :string
     field :url, :string
+    field :reddit_id, :string
+    field :score, :integer
+    field :permalink, :string
+    field :post_raw, :map
 
-    timestamps(type: :utc_datetime)
+    timestamps(type: :utc_datetime_usec)
   end
 
   @doc false
   def changeset(release, attrs) do
     release
-    |> cast(attrs, [:title, :type, :url])
-    |> validate_required([:title, :type, :url])
+    |> cast(attrs, [:title, :url, :reddit_id, :score, :permalink, :post_raw])
+    |> validate_required([:title, :url, :reddit_id, :score, :permalink, :post_raw])
+    |> unique_constraint(:reddit_id)
   end
 end
