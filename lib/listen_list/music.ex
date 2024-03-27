@@ -8,6 +8,8 @@ defmodule ListenList.Music do
 
   alias ListenList.Music.Release
 
+  require Logger
+
   @doc """
   Returns the list of releases.
 
@@ -100,5 +102,44 @@ defmodule ListenList.Music do
   """
   def change_release(%Release{} = release, attrs \\ %{}) do
     Release.changeset(release, attrs)
+  end
+
+  # Create or update releases
+  # insert_all only takes maps so we need to validate changesets manually
+  def create_or_update_releases(releases) do
+    valid_releases =
+      Enum.map(releases, fn release ->
+        %Release{}
+        |> Release.changeset(release)
+        |> Ecto.Changeset.apply_action(:insert)
+        |> case do
+          {:ok, record} ->
+            release_to_map_for_insert(record)
+
+          {:error, changeset} ->
+            Logger.error(
+              "Invalid release: #{inspect(release)}, changeset: #{inspect(changeset.errors)}"
+            )
+
+            nil
+        end
+      end)
+      |> Enum.reject(&is_nil/1)
+
+    Repo.insert_all(Release, valid_releases,
+      on_conflict: {:replace_all_except, [:id, :inserted_at]},
+      conflict_target: :reddit_id
+    )
+  end
+
+  # Convert a release to a bare map with timestamps for insert_all
+  defp release_to_map_for_insert(%Release{} = release) do
+    current_time = DateTime.utc_now()
+
+    release
+    |> Release.to_storable_map()
+    # Drop id otherwise we'll get not null violations
+    |> Map.drop([:id])
+    |> Map.merge(%{inserted_at: current_time, updated_at: current_time})
   end
 end

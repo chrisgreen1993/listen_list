@@ -20,4 +20,8 @@ defmodule ListenList.Music.Release do
     |> validate_required([:title, :url, :reddit_id, :score, :permalink, :post_raw])
     |> unique_constraint(:reddit_id)
   end
+
+  def to_storable_map(release) do
+    Map.take(release, __schema__(:fields))
+  end
 end
