@@ -44,6 +44,6 @@ defmodule ListenList.Reddit do
     |> Map.take(Map.keys(@post_data_key_map))
     |> Enum.map(fn {k, v} -> {String.to_atom(Map.get(@post_data_key_map, k)), v} end)
     |> Enum.into(%{})
-    |> Map.put(:raw_post, data)
+    |> Map.put(:post_raw, data)
   end
 end
