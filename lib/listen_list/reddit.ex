@@ -6,6 +6,10 @@ defmodule ListenList.Reddit do
   alias HTTPoison
   require Logger
 
+  @new_release_identifier "[FRESH ALBUM]"
+
+  @subreddit_search_endpoint "https://www.reddit.com/r/indieheads/search.json?"
+
   @post_data_key_map %{
     "id" => "reddit_id",
     "title" => "title",
@@ -27,12 +31,15 @@ defmodule ListenList.Reddit do
       Keyword.merge(@default_api_options, api_options)
 
     search_url =
-      "https://www.reddit.com/r/indieheads/search.json?" <> URI.encode_query(query_params)
+      @subreddit_search_endpoint <> URI.encode_query(query_params)
 
     case HTTPoison.get(search_url) do
       {:ok, %{status_code: 200, body: body}} ->
         {:ok, %{"data" => %{"children" => posts}}} = Jason.decode(body)
-        Enum.map(posts, &parse_post/1)
+
+        posts
+        |> Enum.filter(&valid_post_title?(&1["data"]["title"]))
+        |> Enum.map(&post_to_release/1)
 
       {:ok, %{status_code: status_code}} ->
         Logger.error("HTTP request failed with status code #{status_code}")
@@ -42,11 +49,24 @@ defmodule ListenList.Reddit do
     end
   end
 
-  defp parse_post(%{"data" => data}) do
-    data
+  defp valid_post_title?(title) do
+    title
+    |> String.trim()
+    |> String.starts_with?(@new_release_identifier)
+  end
+
+  defp clean_post_title(title) do
+    title
+    |> String.replace(@new_release_identifier, "")
+    |> String.trim()
+  end
+
+  defp post_to_release(%{"data" => post_data} = post) do
+    post_data
     |> Map.take(Map.keys(@post_data_key_map))
     |> Enum.map(fn {k, v} -> {String.to_atom(Map.get(@post_data_key_map, k)), v} end)
     |> Enum.into(%{})
-    |> Map.put(:post_raw, data)
+    |> Map.update!(:title, &clean_post_title/1)
+    |> Map.put(:post_raw, post)
   end
 end
