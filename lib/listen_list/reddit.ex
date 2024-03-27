@@ -14,7 +14,7 @@ defmodule ListenList.Reddit do
     "permalink" => "permalink"
   }
 
-  @query_params [
+  @default_api_options [
     q: "self:no[FRESH ALBUM]",
     restrict_sr: "on",
     sort: "new",
@@ -22,9 +22,12 @@ defmodule ListenList.Reddit do
     t: "month"
   ]
 
-  def fetch_new_releases do
+  def fetch_new_releases(api_options \\ []) do
+    query_params =
+      Keyword.merge(@default_api_options, api_options)
+
     search_url =
-      "https://www.reddit.com/r/indieheads/search.json?" <> URI.encode_query(@query_params)
+      "https://www.reddit.com/r/indieheads/search.json?" <> URI.encode_query(query_params)
 
     case HTTPoison.get(search_url) do
       {:ok, %{status_code: 200, body: body}} ->
