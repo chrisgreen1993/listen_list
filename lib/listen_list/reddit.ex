@@ -18,7 +18,7 @@ defmodule ListenList.Reddit do
     q: "self:no[FRESH ALBUM]",
     restrict_sr: "on",
     sort: "new",
-    limit: 5,
+    limit: 100,
     t: "month"
   ]
 
