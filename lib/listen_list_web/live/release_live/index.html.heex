@@ -2,10 +2,7 @@
   Listing Releases
 </.header>
 
-<.table
-  id="releases"
-  rows={@streams.releases}
->
+<.table id="releases" rows={@streams.releases}>
   <:col :let={{_id, release}} label="Title"><%= release.title %></:col>
   <:col :let={{_id, release}} label="Url"><%= release.url %></:col>
 </.table>

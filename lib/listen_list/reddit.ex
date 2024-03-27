@@ -6,7 +6,6 @@ defmodule ListenList.Reddit do
   alias HTTPoison
   require Logger
 
-
   @post_data_key_map %{
     "id" => "reddit_id",
     "title" => "title",
@@ -23,9 +22,9 @@ defmodule ListenList.Reddit do
     t: "month"
   ]
 
-
   def fetch_new_releases do
-    search_url = "https://www.reddit.com/r/indieheads/search.json?" <> URI.encode_query(@query_params)
+    search_url =
+      "https://www.reddit.com/r/indieheads/search.json?" <> URI.encode_query(@query_params)
 
     case HTTPoison.get(search_url) do
       {:ok, %{status_code: 200, body: body}} ->
