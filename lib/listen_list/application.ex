@@ -20,6 +20,17 @@ defmodule ListenList.Application do
       ListenListWeb.Endpoint
     ]
 
+    children =
+      if Application.get_env(:listen_list, :enable_jobs, false) do
+        children ++
+          [
+            # Run every hour
+            {ListenList.Jobs.FetchReleasesJob, 1000 * 60 * 60}
+          ]
+      else
+        children
+      end
+
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: ListenList.Supervisor]

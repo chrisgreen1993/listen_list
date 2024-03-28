@@ -8,6 +8,9 @@ import Config
 config :listen_list, ListenListWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json"
 
+# Enable background jobs in prod
+config :listen_list, :enable_jobs, true
+
 # Configures Swoosh API Client
 config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: ListenList.Finch
 
