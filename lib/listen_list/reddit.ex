@@ -15,7 +15,8 @@ defmodule ListenList.Reddit do
     "title" => "title",
     "url" => "url",
     "score" => "score",
-    "permalink" => "permalink"
+    "permalink" => "permalink",
+    "created_utc" => "post_created_at"
   }
 
   @default_api_options [
@@ -23,7 +24,7 @@ defmodule ListenList.Reddit do
     restrict_sr: "on",
     sort: "new",
     limit: 100,
-    t: "month"
+    t: "all"
   ]
 
   def fetch_new_releases(api_options \\ []) do
@@ -67,6 +68,7 @@ defmodule ListenList.Reddit do
     |> Enum.map(fn {k, v} -> {String.to_atom(Map.get(@post_data_key_map, k)), v} end)
     |> Enum.into(%{})
     |> Map.update!(:title, &clean_post_title/1)
+    |> Map.update!(:post_created_at, &DateTime.from_unix!(trunc(&1)))
     |> Map.put(:post_raw, post)
   end
 end

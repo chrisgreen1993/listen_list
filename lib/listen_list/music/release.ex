@@ -9,6 +9,7 @@ defmodule ListenList.Music.Release do
     field :score, :integer
     field :permalink, :string
     field :post_raw, :map
+    field :post_created_at, :utc_datetime_usec
 
     timestamps(type: :utc_datetime_usec)
   end
@@ -16,8 +17,16 @@ defmodule ListenList.Music.Release do
   @doc false
   def changeset(release, attrs) do
     release
-    |> cast(attrs, [:title, :url, :reddit_id, :score, :permalink, :post_raw])
-    |> validate_required([:title, :url, :reddit_id, :score, :permalink, :post_raw])
+    |> cast(attrs, [:title, :url, :reddit_id, :score, :permalink, :post_raw, :post_created_at])
+    |> validate_required([
+      :title,
+      :url,
+      :reddit_id,
+      :score,
+      :permalink,
+      :post_raw,
+      :post_created_at
+    ])
     |> unique_constraint(:reddit_id)
   end
 
