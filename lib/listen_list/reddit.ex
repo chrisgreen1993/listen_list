@@ -16,7 +16,7 @@ defmodule ListenList.Reddit do
     "title" => "title",
     "url" => "url",
     "score" => "score",
-    "permalink" => "permalink",
+    "permalink" => "post_url",
     "created_utc" => "post_created_at"
   }
 
@@ -84,6 +84,7 @@ defmodule ListenList.Reddit do
     |> Enum.into(%{})
     |> Map.update!(:title, &clean_post_title/1)
     |> Map.update!(:post_created_at, &DateTime.from_unix!(trunc(&1)))
+    |> Map.update!(:post_url, &("https://reddit.com" <> &1))
     |> Map.put(:post_raw, post)
   end
 end

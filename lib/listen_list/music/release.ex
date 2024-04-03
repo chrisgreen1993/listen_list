@@ -7,7 +7,7 @@ defmodule ListenList.Music.Release do
     field :url, :string
     field :reddit_id, :string
     field :score, :integer
-    field :permalink, :string
+    field :post_url, :string
     field :post_raw, :map
     field :post_created_at, :utc_datetime_usec
 
@@ -17,13 +17,13 @@ defmodule ListenList.Music.Release do
   @doc false
   def changeset(release, attrs) do
     release
-    |> cast(attrs, [:title, :url, :reddit_id, :score, :permalink, :post_raw, :post_created_at])
+    |> cast(attrs, [:title, :url, :reddit_id, :score, :post_url, :post_raw, :post_created_at])
     |> validate_required([
       :title,
       :url,
       :reddit_id,
       :score,
-      :permalink,
+      :post_url,
       :post_raw,
       :post_created_at
     ])
