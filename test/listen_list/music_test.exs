@@ -26,8 +26,9 @@ defmodule ListenList.MusicTest do
         url: "some url",
         reddit_id: "some reddit_id",
         score: 1,
-        permalink: "some permalink",
-        post_raw: %{}
+        post_url: "some post_url",
+        post_raw: %{},
+        post_created_at: DateTime.from_unix!(0)
       }
 
       assert {:ok, %Release{} = release} = Music.create_release(valid_attrs)
