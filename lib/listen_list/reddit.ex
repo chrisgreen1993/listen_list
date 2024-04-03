@@ -4,6 +4,7 @@ defmodule ListenList.Reddit do
   """
 
   alias HTTPoison
+  alias HtmlEntities
   require Logger
 
   @new_release_identifier "[FRESH ALBUM]"
@@ -73,6 +74,7 @@ defmodule ListenList.Reddit do
     title
     |> String.replace(@new_release_identifier, "")
     |> String.trim()
+    |> HtmlEntities.decode()
   end
 
   defp post_to_release(%{"data" => post_data} = post) do
