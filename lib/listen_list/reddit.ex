@@ -27,26 +27,39 @@ defmodule ListenList.Reddit do
     t: "all"
   ]
 
+  # fetch new releases using the Reddit search API
+  # This will keep paging through the search results using the after param
+  # but Reddit will only ever return ~250 search results
   def fetch_new_releases(api_options \\ []) do
-    query_params =
-      Keyword.merge(@default_api_options, api_options)
+    query_params = Keyword.merge(@default_api_options, api_options)
 
     search_url =
       @subreddit_search_endpoint <> URI.encode_query(query_params)
 
     case HTTPoison.get(search_url) do
       {:ok, %{status_code: 200, body: body}} ->
-        {:ok, %{"data" => %{"children" => posts}}} = Jason.decode(body)
+        {:ok, %{"data" => %{"children" => posts, "after" => next_after}}} = Jason.decode(body)
 
-        posts
-        |> Enum.filter(&valid_post_title?(&1["data"]["title"]))
-        |> Enum.map(&post_to_release/1)
+        releases =
+          posts
+          |> Enum.filter(&valid_post_title?(&1["data"]["title"]))
+          |> Enum.map(&post_to_release/1)
+
+        if next_after do
+          # add the after param so we can fetch the next page of results
+          next_api_options = Keyword.put(api_options, :after, next_after)
+          releases ++ fetch_new_releases(next_api_options)
+        else
+          releases
+        end
 
       {:ok, %{status_code: status_code}} ->
         Logger.error("HTTP request failed with status code #{status_code}")
+        []
 
       {:error, reason} ->
         Logger.error("HTTP request failed with reason #{inspect(reason)}")
+        []
     end
   end
 
