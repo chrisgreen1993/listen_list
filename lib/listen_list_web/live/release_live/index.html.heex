@@ -1,8 +1,17 @@
-<.header>
-  Listing Releases
-</.header>
+<form>
+  <.input
+    type="select"
+    id="period"
+    name="period"
+    options={[{"Week", :week}, {"Month", :month}, {"Year", :year}]}
+    value={@selected_period}
+    phx-change="change_period"
+  />
+</form>
 
-<.table id="releases" rows={@streams.releases}>
-  <:col :let={{_id, release}} label="Title"><%= release.title %></:col>
-  <:col :let={{_id, release}} label="Url"><%= release.url %></:col>
+<.table id="releases" rows={@releases}>
+  <:col :let={release} label="Title">
+    <a href={release.post_url} target="_blank" rel="noopener noreferrer"><%= release.title %></a>
+  </:col>
+  <:col :let={release} label="Score"><%= release.score %></:col>
 </.table>

@@ -23,6 +23,23 @@ defmodule ListenList.Music do
     Repo.all(Release)
   end
 
+  def list_top_releases(period \\ :week) do
+    days =
+      case period do
+        :week -> 7
+        :month -> 30
+        :year -> 365
+      end
+
+    query =
+      from r in Release,
+        where: r.post_created_at >= ^DateTime.add(DateTime.utc_now(), -days, :day),
+        order_by: [desc: r.score],
+        limit: 20
+
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single release.
 
