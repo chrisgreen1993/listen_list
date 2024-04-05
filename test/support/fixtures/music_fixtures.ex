@@ -16,6 +16,7 @@ defmodule ListenList.MusicFixtures do
         reddit_id: "some reddit_id",
         score: 1,
         post_url: "some post_url",
+        thumbnail_url: "some thumbnail_url",
         post_raw: %{},
         post_created_at: DateTime.from_unix!(0)
       })

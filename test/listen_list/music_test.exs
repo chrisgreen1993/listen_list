@@ -27,6 +27,7 @@ defmodule ListenList.MusicTest do
         reddit_id: "some reddit_id",
         score: 1,
         post_url: "some post_url",
+        thumbnail_url: "some_thumbnail_url",
         post_raw: %{},
         post_created_at: DateTime.from_unix!(0)
       }

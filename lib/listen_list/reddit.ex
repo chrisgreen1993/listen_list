@@ -17,7 +17,8 @@ defmodule ListenList.Reddit do
     "url" => "url",
     "score" => "score",
     "permalink" => "post_url",
-    "created_utc" => "post_created_at"
+    "created_utc" => "post_created_at",
+    "thumbnail" => "thumbnail_url"
   }
 
   @default_api_options [
