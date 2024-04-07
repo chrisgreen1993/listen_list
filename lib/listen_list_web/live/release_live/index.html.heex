@@ -10,6 +10,9 @@
 </form>
 
 <.table id="releases" rows={@releases}>
+  <:col :let={release} label="Thumb">
+    <img src={release.thumbnail_url} />
+  </:col>
   <:col :let={release} label="Title">
     <a href={release.post_url} target="_blank" rel="noopener noreferrer"><%= release.title %></a>
   </:col>
