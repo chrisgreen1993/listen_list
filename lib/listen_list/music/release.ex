@@ -34,7 +34,6 @@ defmodule ListenList.Music.Release do
       :reddit_id,
       :score,
       :post_url,
-      :thumbnail_url,
       :post_raw,
       :post_created_at
     ])

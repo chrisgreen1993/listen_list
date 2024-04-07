@@ -86,6 +86,8 @@ defmodule ListenList.Reddit do
     |> Map.update!(:title, &clean_post_title/1)
     |> Map.update!(:post_created_at, &DateTime.from_unix!(trunc(&1)))
     |> Map.update!(:post_url, &("https://reddit.com" <> &1))
+    # If there is no thumbnail, reddit returns 'default'
+    |> Map.update!(:thumbnail_url, &if(&1 == "default", do: nil, else: &1))
     |> Map.put(:post_raw, post)
   end
 end
