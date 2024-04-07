@@ -17,4 +17,7 @@
     <a href={release.post_url} target="_blank" rel="noopener noreferrer"><%= release.title %></a>
   </:col>
   <:col :let={release} label="Score"><%= release.score %></:col>
+  <:col :let={release} label="Date">
+    <%= Calendar.strftime(release.post_created_at, "%a, %B %d %Y") %>
+  </:col>
 </.table>
