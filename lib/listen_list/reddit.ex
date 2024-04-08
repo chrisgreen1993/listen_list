@@ -57,13 +57,13 @@ defmodule ListenList.Reddit do
 
   defp release_field_mappers do
     %{
-      "id" => {:reddit_id, & &1},
-      "title" => {:title, &clean_post_title/1},
-      "url" => {:url, & &1},
-      "score" => {:score, & &1},
-      "permalink" => {:post_url, &("https://reddit.com" <> &1)},
-      "created_utc" => {:post_created_at, &DateTime.from_unix!(trunc(&1))},
-      "thumbnail" => {:thumbnail_url, &if(&1 == "default", do: nil, else: &1)}
+      "id" => &%{reddit_id: &1},
+      "title" => &clean_post_title/1,
+      "url" => &%{url: &1},
+      "score" => &%{score: &1},
+      "permalink" => &%{post_url: "https://reddit.com" <> &1},
+      "created_utc" => &%{post_created_at: DateTime.from_unix!(trunc(&1))},
+      "thumbnail" => &%{thumbnail_url: if(&1 == "default", do: nil, else: &1)}
     }
   end
 
@@ -73,17 +73,20 @@ defmodule ListenList.Reddit do
     |> String.starts_with?(@new_release_identifier)
   end
 
-  defp clean_post_title(title) do
-    title
-    |> String.replace(@new_release_identifier, "")
-    |> String.trim()
-    |> HtmlEntities.decode()
+  def clean_post_title(title) do
+    cleaned_title =
+      title
+      |> String.replace(@new_release_identifier, "")
+      |> String.trim()
+      |> HtmlEntities.decode()
+
+    %{title: cleaned_title}
   end
 
   defp post_to_release(%{"data" => post_data} = post) do
-    Enum.reduce(release_field_mappers(), %{}, fn {k, {new_key, function}}, acc ->
+    Enum.reduce(release_field_mappers(), %{}, fn {k, function}, acc ->
       if value = Map.get(post_data, k) do
-        Map.put(acc, new_key, function.(value))
+        Map.merge(acc, function.(value))
       else
         acc
       end
