@@ -9,18 +9,19 @@
   />
 </form>
 
-<.table id="releases" rows={@releases}>
-  <:col :let={release} label="Thumb">
-    <img src={release.thumbnail_url} />
-  </:col>
-  <:col :let={release} label="Artist">
-    <a href={release.post_url} target="_blank" rel="noopener noreferrer"><%= release.artist %></a>
-  </:col>
-  <:col :let={release} label="Album">
-    <a href={release.post_url} target="_blank" rel="noopener noreferrer"><%= release.album %></a>
-  </:col>
-  <:col :let={release} label="Score"><%= release.score %></:col>
-  <:col :let={release} label="Date">
-    <%= Calendar.strftime(release.post_created_at, "%a, %B %d %Y") %>
-  </:col>
-</.table>
+<ol class="pt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+  <%= for release <- @releases do %>
+    <li class="rounded overflow-hidden shadow-lg">
+      <a href={release.post_url} target="_blank" rel="noopener noreferrer">
+        <img class="w-full" src={release.thumbnail_url} alt="Thumbnail" />
+      </a>
+      <div class="px-6 py-4">
+        <div class="font-bold text-xl mb-2"><%= release.artist %></div>
+        <p class="text-gray-700 text-base"><%= release.album %></p>
+      </div>
+      <div class="px-6 pt-4 pb-2 text-sm text-gray-600">
+        <%= Calendar.strftime(release.post_created_at, "%a, %B %d %Y") %>
+      </div>
+    </li>
+  <% end %>
+</ol>
