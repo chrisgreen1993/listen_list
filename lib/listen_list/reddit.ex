@@ -85,7 +85,7 @@ defmodule ListenList.Reddit do
       |> HtmlEntities.decode()
       |> String.split(@artist_album_delimiter, parts: 2)
 
-    %{artist: artist, album: album, title: "#{artist} - #{album}"}
+    %{artist: artist, album: album}
   end
 
   defp post_to_release(%{"data" => post_data} = post) do

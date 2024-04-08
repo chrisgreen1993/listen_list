@@ -13,8 +13,11 @@
   <:col :let={release} label="Thumb">
     <img src={release.thumbnail_url} />
   </:col>
-  <:col :let={release} label="Title">
-    <a href={release.post_url} target="_blank" rel="noopener noreferrer"><%= release.title %></a>
+  <:col :let={release} label="Artist">
+    <a href={release.post_url} target="_blank" rel="noopener noreferrer"><%= release.artist %></a>
+  </:col>
+  <:col :let={release} label="Album">
+    <a href={release.post_url} target="_blank" rel="noopener noreferrer"><%= release.album %></a>
   </:col>
   <:col :let={release} label="Score"><%= release.score %></:col>
   <:col :let={release} label="Date">

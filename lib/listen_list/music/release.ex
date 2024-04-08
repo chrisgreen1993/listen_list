@@ -5,7 +5,6 @@ defmodule ListenList.Music.Release do
   schema "releases" do
     field :artist, :string
     field :album, :string
-    field :title, :string
     field :url, :string
     field :reddit_id, :string
     field :score, :integer
@@ -23,7 +22,6 @@ defmodule ListenList.Music.Release do
     |> cast(attrs, [
       :artist,
       :album,
-      :title,
       :url,
       :reddit_id,
       :score,
@@ -35,7 +33,6 @@ defmodule ListenList.Music.Release do
     |> validate_required([
       :artist,
       :album,
-      :title,
       :url,
       :reddit_id,
       :score,

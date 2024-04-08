@@ -13,7 +13,6 @@ defmodule ListenList.MusicFixtures do
       |> Enum.into(%{
         artist: "some artist",
         album: "some album",
-        title: "some title",
         url: "some url",
         reddit_id: "some reddit_id",
         score: 1,
