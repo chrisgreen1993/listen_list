@@ -11,16 +11,6 @@ defmodule ListenList.Reddit do
 
   @subreddit_search_endpoint "https://www.reddit.com/r/indieheads/search.json?"
 
-  @post_data_key_map %{
-    "id" => "reddit_id",
-    "title" => "title",
-    "url" => "url",
-    "score" => "score",
-    "permalink" => "post_url",
-    "created_utc" => "post_created_at",
-    "thumbnail" => "thumbnail_url"
-  }
-
   @default_api_options [
     q: "self:no[FRESH ALBUM]",
     restrict_sr: "on",
@@ -65,6 +55,18 @@ defmodule ListenList.Reddit do
     end
   end
 
+  defp release_field_mappers do
+    %{
+      "id" => {:reddit_id, & &1},
+      "title" => {:title, &clean_post_title/1},
+      "url" => {:url, & &1},
+      "score" => {:score, & &1},
+      "permalink" => {:post_url, &("https://reddit.com" <> &1)},
+      "created_utc" => {:post_created_at, &DateTime.from_unix!(trunc(&1))},
+      "thumbnail" => {:thumbnail_url, &if(&1 == "default", do: nil, else: &1)}
+    }
+  end
+
   defp valid_post_title?(title) do
     title
     |> String.trim()
@@ -79,15 +81,13 @@ defmodule ListenList.Reddit do
   end
 
   defp post_to_release(%{"data" => post_data} = post) do
-    post_data
-    |> Map.take(Map.keys(@post_data_key_map))
-    |> Enum.map(fn {k, v} -> {String.to_atom(Map.get(@post_data_key_map, k)), v} end)
-    |> Enum.into(%{})
-    |> Map.update!(:title, &clean_post_title/1)
-    |> Map.update!(:post_created_at, &DateTime.from_unix!(trunc(&1)))
-    |> Map.update!(:post_url, &("https://reddit.com" <> &1))
-    # If there is no thumbnail, reddit returns 'default'
-    |> Map.update!(:thumbnail_url, &if(&1 == "default", do: nil, else: &1))
+    Enum.reduce(release_field_mappers(), %{}, fn {k, {new_key, function}}, acc ->
+      if value = Map.get(post_data, k) do
+        Map.put(acc, new_key, function.(value))
+      else
+        acc
+      end
+    end)
     |> Map.put(:post_raw, post)
   end
 end
