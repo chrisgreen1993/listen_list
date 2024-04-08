@@ -3,6 +3,8 @@ defmodule ListenList.Music.Release do
   import Ecto.Changeset
 
   schema "releases" do
+    field :artist, :string
+    field :album, :string
     field :title, :string
     field :url, :string
     field :reddit_id, :string
@@ -19,6 +21,8 @@ defmodule ListenList.Music.Release do
   def changeset(release, attrs) do
     release
     |> cast(attrs, [
+      :artist,
+      :album,
       :title,
       :url,
       :reddit_id,
