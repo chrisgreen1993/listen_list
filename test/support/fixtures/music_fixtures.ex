@@ -11,6 +11,8 @@ defmodule ListenList.MusicFixtures do
     {:ok, release} =
       attrs
       |> Enum.into(%{
+        artist: "some artist",
+        album: "some album",
         title: "some title",
         url: "some url",
         reddit_id: "some reddit_id",

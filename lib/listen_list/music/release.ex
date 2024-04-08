@@ -33,6 +33,8 @@ defmodule ListenList.Music.Release do
       :post_created_at
     ])
     |> validate_required([
+      :artist,
+      :album,
       :title,
       :url,
       :reddit_id,

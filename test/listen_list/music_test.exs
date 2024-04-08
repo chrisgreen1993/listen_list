@@ -22,6 +22,8 @@ defmodule ListenList.MusicTest do
 
     test "create_release/1 with valid data creates a release" do
       valid_attrs = %{
+        album: "some album",
+        artist: "some artist",
         title: "some title",
         url: "some url",
         reddit_id: "some reddit_id",
