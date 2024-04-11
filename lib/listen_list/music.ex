@@ -36,7 +36,7 @@ defmodule ListenList.Music do
         select: [:id, :thumbnail_url, :artist, :album, :score, :post_url, :url, :post_created_at],
         where: r.post_created_at >= ^DateTime.add(DateTime.utc_now(), -days, :day),
         order_by: [desc: r.score],
-        limit: 20
+        limit: 50
 
     Repo.all(query)
   end
