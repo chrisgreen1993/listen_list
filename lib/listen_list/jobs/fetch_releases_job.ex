@@ -27,7 +27,8 @@ defmodule ListenList.Jobs.FetchReleasesJob do
   end
 
   def fetch_releases do
-    releases = Reddit.fetch_new_releases()
+    access_token = Reddit.fetch_access_token()
+    releases = Reddit.fetch_new_releases(access_token)
     Music.create_or_update_releases(releases)
   end
 end
