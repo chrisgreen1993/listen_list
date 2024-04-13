@@ -20,8 +20,8 @@
         <% end %>
       </a>
       <div class="px-6 py-4 flex-grow">
-        <div class="font-bold text-xl mb-2 line-clamp-2"><%= release.artist %></div>
-        <p class="text-gray-700 text-base line-clamp-2"><%= release.album %></p>
+        <div class="font-bold text-xl mb-2 line-clamp-2"><%= release.album %></div>
+        <p class="text-gray-700 text-base line-clamp-2"><%= release.artist %></p>
       </div>
       <div class="px-6 py-4 text-sm text-gray-600">
         <%= Calendar.strftime(release.post_created_at, "%a, %B %d %Y") %>
