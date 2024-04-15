@@ -28,8 +28,8 @@ defmodule ListenList.Jobs.FetchReleasesJob do
 
   def fetch_releases do
     Logger.info("Fetching new releases")
-    access_token = Reddit.fetch_access_token()
-    releases = Reddit.fetch_new_releases(access_token)
+    access_token = Reddit.API.fetch_access_token()
+    releases = Reddit.API.fetch_new_releases(access_token)
     {changed_rows, _} = Music.create_or_update_releases(releases)
     Logger.info("Inserted #{changed_rows} releases")
   end
