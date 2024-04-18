@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.FetchReleases do
+defmodule Mix.Tasks.FetchReleasesFromApi do
   use Mix.Task
 
   @shortdoc "Manually fetch new releases from Reddit and store them in the database"
