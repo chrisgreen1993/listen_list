@@ -35,7 +35,9 @@ defmodule ListenList.Reddit.UtilsTest do
         :post_url,
         :post_created_at,
         :thumbnail_url,
-        :post_raw
+        :post_raw,
+        :import_status,
+        :import_type
       ]
 
       expected_keys |> Enum.all?(&Map.has_key?(release, &1))
@@ -57,7 +59,7 @@ defmodule ListenList.Reddit.UtilsTest do
     end
 
     test "returns a release with the title transformed into artist and album" do
-      release = Utils.post_to_release(post_fixture())
+      release = Utils.post_to_release(post_fixture(), :api)
       assert release_has_expected_keys?(release)
       assert release[:album] == "Album"
       assert release[:artist] == "Artist"
@@ -65,39 +67,65 @@ defmodule ListenList.Reddit.UtilsTest do
 
     test "returns a release with the original post data in post_raw" do
       post = post_fixture()
-      release = Utils.post_to_release(post)
+      release = Utils.post_to_release(post, :api)
       assert release_has_expected_keys?(release)
       assert release[:post_raw] == post
     end
 
     test "returns a releases with the full post_url" do
       post = post_fixture()
-      release = Utils.post_to_release(post)
+      release = Utils.post_to_release(post, :api)
+      assert release_has_expected_keys?(release)
       assert release[:post_url] == "https://reddit.com" <> post["permalink"]
     end
 
     test "returns a release with post_created_at DateTime" do
       post = post_fixture()
-      release = Utils.post_to_release(post)
+      release = Utils.post_to_release(post, :api)
+      assert release_has_expected_keys?(release)
       assert release[:post_created_at] == DateTime.from_unix!(1_614_556_800)
     end
 
     test "returns a release with post_created_at DateTime when the timestamp is string" do
       post = post_fixture(%{"created_utc" => "1614556800"})
-      release = Utils.post_to_release(post)
+      release = Utils.post_to_release(post, :api)
+      assert release_has_expected_keys?(release)
       assert release[:post_created_at] == DateTime.from_unix!(1_614_556_800)
     end
 
     test "returns a release with thumbnail_url" do
       post = post_fixture()
-      release = Utils.post_to_release(post)
+      release = Utils.post_to_release(post, :api)
+      assert release_has_expected_keys?(release)
       assert release[:thumbnail_url] == "https://thumbnail.com"
     end
 
     test "returns a release with thumbnail_url as nil if its default" do
       post = post_fixture(%{"thumbnail" => "default"})
-      release = Utils.post_to_release(post)
+      release = Utils.post_to_release(post, :api)
+      assert release_has_expected_keys?(release)
       assert release[:thumbnail_url] == nil
+    end
+
+    test "returns a release with import_status as :auto" do
+      post = post_fixture()
+      release = Utils.post_to_release(post, :api)
+      assert release_has_expected_keys?(release)
+      assert release[:import_status] == :auto
+    end
+
+    test "returns a release with import_type as :api" do
+      post = post_fixture()
+      release = Utils.post_to_release(post, :api)
+      assert release_has_expected_keys?(release)
+      assert release[:import_type] == :api
+    end
+
+    test "returns a release with import_type as :file" do
+      post = post_fixture()
+      release = Utils.post_to_release(post, :file)
+      assert release_has_expected_keys?(release)
+      assert release[:import_type] == :file
     end
   end
 end

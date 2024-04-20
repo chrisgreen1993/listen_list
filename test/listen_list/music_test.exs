@@ -30,7 +30,9 @@ defmodule ListenList.MusicTest do
         post_url: "some post_url",
         thumbnail_url: "some_thumbnail_url",
         post_raw: %{},
-        post_created_at: DateTime.from_unix!(0)
+        post_created_at: DateTime.from_unix!(0),
+        import_status: :auto,
+        import_type: :api
       }
 
       assert {:ok, %Release{} = release} = Music.create_release(valid_attrs)

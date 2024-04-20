@@ -65,7 +65,7 @@ defmodule ListenList.Reddit.Utils do
     %{post_created_at: post_created_at}
   end
 
-  def post_to_release(post) do
+  def post_to_release(post, import_type) do
     Enum.reduce(release_field_mappers(), %{}, fn {k, function}, acc ->
       if value = Map.get(post, k) do
         Map.merge(acc, function.(value))
@@ -73,6 +73,7 @@ defmodule ListenList.Reddit.Utils do
         acc
       end
     end)
-    |> Map.put(:post_raw, post)
+    # For now we default import_status to auto until we implement the logic for this.
+    |> Map.merge(%{post_raw: post, import_type: import_type, import_status: :auto})
   end
 end

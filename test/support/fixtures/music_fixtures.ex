@@ -19,7 +19,9 @@ defmodule ListenList.MusicFixtures do
         post_url: "some post_url",
         thumbnail_url: "some thumbnail_url",
         post_raw: %{},
-        post_created_at: DateTime.from_unix!(0)
+        post_created_at: DateTime.from_unix!(0),
+        import_status: :auto,
+        import_type: :api
       })
       |> ListenList.Music.create_release()
 
