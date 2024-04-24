@@ -31,8 +31,7 @@ if config_env() == :prod do
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   config :listen_list, ListenList.Repo,
-    ssl: true,
-    ssl_opts: [verify: :verify_none],
+    # ssl: true,
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     socket_options: maybe_ipv6
@@ -116,3 +115,7 @@ if config_env() == :prod do
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
+
+config :listen_list, :reddit_oauth,
+  client_id: System.get_env("REDDIT_CLIENT_ID"),
+  client_secret: System.get_env("REDDIT_CLIENT_SECRET")
