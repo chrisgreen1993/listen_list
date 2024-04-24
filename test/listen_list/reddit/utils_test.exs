@@ -13,11 +13,6 @@ defmodule ListenList.Reddit.UtilsTest do
       refute Utils.valid_post?(post)
     end
 
-    test "returns false if the post does not have a valid delimiter between album and artist" do
-      post = %{"title" => "[FRESH ALBUM] - Artist Album", "removed_by_category" => nil}
-      refute Utils.valid_post?(post)
-    end
-
     test "returns false if the post has been removed" do
       post = %{"title" => "[FRESH ALBUM] Artist - Album", "removed_by_category" => "deleted"}
       refute Utils.valid_post?(post)
@@ -107,11 +102,32 @@ defmodule ListenList.Reddit.UtilsTest do
       assert release[:thumbnail_url] == nil
     end
 
-    test "returns a release with import_status as :auto" do
+    test "returns a release with import_status as :auto if the title has a delimeter" do
       post = post_fixture()
       release = Utils.post_to_release(post, :api)
       assert release_has_expected_keys?(release)
       assert release[:import_status] == :auto
+    end
+
+    test "returns a release with import_status as :in_review if the title does not have a delimeter" do
+      post = post_fixture(%{"title" => "[FRESH ALBUM] Artist Album"})
+      release = Utils.post_to_release(post, :api)
+      assert release_has_expected_keys?(release)
+      assert release[:import_status] == :in_review
+    end
+
+    test "returns a release with import_status as :in_review if there is more than one delimeter" do
+      post = post_fixture(%{"title" => "[FRESH ALBUM] Artist - ??? - Album"})
+      release = Utils.post_to_release(post, :api)
+      assert release_has_expected_keys?(release)
+      assert release[:import_status] == :in_review
+    end
+
+    test "returns a release with import_status as :in_review if the fdelimeter isn't valid" do
+      post = post_fixture(%{"title" => "[FRESH ALBUM] Artist -Album"})
+      release = Utils.post_to_release(post, :api)
+      assert release_has_expected_keys?(release)
+      assert release[:import_status] == :in_review
     end
 
     test "returns a release with import_type as :api" do

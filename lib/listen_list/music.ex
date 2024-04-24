@@ -35,6 +35,7 @@ defmodule ListenList.Music do
       from r in Release,
         select: [:id, :thumbnail_url, :artist, :album, :score, :post_url, :url, :post_created_at],
         where: r.post_created_at >= ^DateTime.add(DateTime.utc_now(), -days, :day),
+        where: r.import_status in [:manual, :auto],
         order_by: [desc: r.score],
         limit: 50
 
@@ -122,6 +123,43 @@ defmodule ListenList.Music do
     Release.changeset(release, attrs)
   end
 
+  # Macro to generate the ON CONFLICT clause for the release import
+  # The update: parameter doesn't let us to build fragments dynamically,
+  # so instead we use a macro do do it.
+  # this generates fragments that update all fields except for import_status, artist and album
+  # if import_status has a value of 'manual' or 'rejected' we keep the existing value
+  defmacro create_or_update_conflict_action() do
+    # We do not want to update the id or inserted_at fields
+    fields = Release.__schema__(:fields) -- [:id, :inserted_at]
+
+    set_list =
+      Enum.map(fields, fn field ->
+        case field do
+          field when field in [:artist, :album, :import_status] ->
+            # for these fields we generate an SQL case statement to check the existing value in import_status
+            quote do
+              {unquote(field),
+               fragment(
+                 "CASE WHEN ? IN ('manual', 'rejected') THEN ? ELSE excluded.? END",
+                 field(r, :import_status),
+                 field(r, ^unquote(field)),
+                 literal(^Atom.to_string(unquote(field)))
+               )}
+            end
+
+          _ ->
+            # the rest of the fields we just update with the new value
+            quote do
+              {unquote(field), fragment("excluded.?", literal(^Atom.to_string(unquote(field))))}
+            end
+        end
+      end)
+
+    quote do
+      from(r in Release, update: [set: unquote(set_list)])
+    end
+  end
+
   # Create or update releases
   # insert_all only takes maps so we need to validate changesets manually
   def create_or_update_releases(releases) do
@@ -145,7 +183,7 @@ defmodule ListenList.Music do
       |> Enum.reject(&is_nil/1)
 
     Repo.insert_all(Release, valid_releases,
-      on_conflict: {:replace_all_except, [:id, :inserted_at]},
+      on_conflict: create_or_update_conflict_action(),
       conflict_target: :reddit_id
     )
   end

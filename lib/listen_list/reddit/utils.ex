@@ -25,28 +25,24 @@ defmodule ListenList.Reddit.Utils do
 
   def valid_post?(%{"title" => title}), do: valid_post_title?(title)
 
-  defp valid_post_title?(title) do
-    case String.starts_with?(title, @new_release_identifier) do
-      false ->
-        false
+  defp valid_post_title?(title), do: String.starts_with?(title, @new_release_identifier)
 
-      true ->
-        title
-        |> String.replace(@new_release_identifier, "")
-        |> String.trim()
-        |> String.contains?(@artist_album_delimiter)
-    end
-  end
-
+  # Extract the artist and album from the title
+  # If we can extract the artist and album, we set import_status to auto
+  # If we can't, we set import_status to in_review
   defp title_to_artist_and_album(title) do
-    [artist, album] =
-      title
-      |> String.replace(@new_release_identifier, "")
-      |> String.trim()
-      |> HtmlEntities.decode()
-      |> String.split(@artist_album_delimiter, parts: 2)
+    title
+    |> String.replace(@new_release_identifier, "")
+    |> String.trim()
+    |> HtmlEntities.decode()
+    |> String.split(@artist_album_delimiter)
+    |> case do
+      [artist, album] when is_binary(artist) and is_binary(album) ->
+        %{artist: artist, album: album, import_status: :auto}
 
-    %{artist: artist, album: album}
+      _ ->
+        %{artist: nil, album: nil, import_status: :in_review}
+    end
   end
 
   defp to_integer(value) when is_binary(value), do: String.to_integer(value)
@@ -73,7 +69,6 @@ defmodule ListenList.Reddit.Utils do
         acc
       end
     end)
-    # For now we default import_status to auto until we implement the logic for this.
-    |> Map.merge(%{post_raw: post, import_type: import_type, import_status: :auto})
+    |> Map.merge(%{post_raw: post, import_type: import_type})
   end
 end
