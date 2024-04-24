@@ -20,7 +20,7 @@ defmodule ListenList.Reddit.File do
 
   defp create_json_stream(file_path) do
     Stream.resource(
-      fn -> File.open!(file_path) end,
+      fn -> File.open!(file_path, [:read, :utf8]) end,
       fn file ->
         case IO.read(file, :line) do
           :eof -> {:halt, file}
