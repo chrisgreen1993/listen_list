@@ -59,7 +59,8 @@ defmodule ListenList.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
       {:httpoison, "~> 2.0"},
-      {:html_entities, "~> 0.5"}
+      {:html_entities, "~> 0.5"},
+      {:timex, "~> 3.0"}
     ]
   end
 
