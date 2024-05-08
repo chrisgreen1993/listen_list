@@ -9,28 +9,40 @@
   />
 </form>
 
-<ol class="pt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-  <%= for release <- @releases do %>
-    <li class="rounded overflow-hidden shadow-lg">
-      <a
-        class="flex flex-col h-full"
-        href={release.post_url}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <%= if release.thumbnail_url do %>
-          <img class="relative w-full aspect-square" src={release.thumbnail_url} alt="Thumbnail" />
-        <% else %>
-          <div class="relative w-full aspect-square bg-gray-300"></div>
-        <% end %>
-        <div class="px-6 py-4 flex-grow">
-          <h2 class="font-bold text-xl mb-2 line-clamp-2"><%= release.album %></h2>
-          <p class="text-gray-700 text-base line-clamp-2"><%= release.artist %></p>
-        </div>
-        <p class="px-6 py-4 text-sm text-gray-600">
-          <%= Calendar.strftime(release.post_created_at, "%a, %B %d %Y") %>
-        </p>
-      </a>
-    </li>
-  <% end %>
-</ol>
+<%= for %{period_start: period_start, period_end: period_end, releases: releases} <- @releases do %>
+  <h2 class="font-bold text-2xl p-4">
+    <%= Calendar.strftime(period_start, "%a, %B %d %Y") %> - <%= Calendar.strftime(
+      period_end,
+      "%a, %B %d %Y"
+    ) %>
+  </h2>
+  <ol class="py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+    <%= for release <- releases do %>
+      <li class="rounded overflow-hidden shadow-lg">
+        <a
+          class="flex flex-col h-full"
+          href={release.post_url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <%= if release.thumbnail_url do %>
+            <img
+              class="relative w-full aspect-square"
+              src={release.thumbnail_url}
+              alt="Thumbnail"
+            />
+          <% else %>
+            <div class="relative w-full aspect-square bg-gray-300"></div>
+          <% end %>
+          <div class="px-6 py-4 flex-grow">
+            <h2 class="font-bold text-xl mb-2 line-clamp-2"><%= release.album %></h2>
+            <p class="text-gray-700 text-base line-clamp-2"><%= release.artist %></p>
+          </div>
+          <p class="px-6 py-4 text-sm text-gray-600">
+            <%= Calendar.strftime(release.post_created_at, "%a, %B %d %Y") %>
+          </p>
+        </a>
+      </li>
+    <% end %>
+  </ol>
+<% end %>

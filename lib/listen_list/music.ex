@@ -7,6 +7,7 @@ defmodule ListenList.Music do
   alias ListenList.Repo
 
   alias ListenList.Music.Release
+  alias ListenList.Utils.Time
 
   require Logger
 
@@ -23,23 +24,37 @@ defmodule ListenList.Music do
     Repo.all(Release)
   end
 
-  def list_top_releases(period \\ :week) do
-    days =
-      case period do
-        :week -> 7
-        :month -> 30
-        :year -> 365
-      end
-
+  defp get_releases_for_period(start_date, end_date, max_per_period) do
     query =
       from r in Release,
         select: [:id, :thumbnail_url, :artist, :album, :score, :post_url, :url, :post_created_at],
-        where: r.post_created_at >= ^DateTime.add(DateTime.utc_now(), -days, :day),
         where: r.import_status in [:manual, :auto],
+        where: r.post_created_at >= ^start_date,
+        where: r.post_created_at < ^end_date,
         order_by: [desc: r.score],
-        limit: 50
+        limit: ^max_per_period
 
     Repo.all(query)
+  end
+
+  def list_top_releases(:week), do: list_top_releases_grouped_by_period(:week, 10, 4)
+  def list_top_releases(:month), do: list_top_releases_grouped_by_period(:month, 20, 12)
+  def list_top_releases(:year), do: list_top_releases_grouped_by_period(:year, 50, 4)
+
+  def list_top_releases_grouped_by_period(period, max_per_period, max_periods) do
+    # For weeks, we start the week on Thursday as most stuff is released on Fridays
+    Time.past_intervals_for_period(DateTime.utc_now(), period, max_periods, :thursday)
+    |> Enum.map(fn %{start_date: start_date, end_date: end_date} ->
+      releases = get_releases_for_period(start_date, end_date, max_per_period)
+
+      %{
+        period_type: period,
+        period_start: start_date,
+        period_end: end_date,
+        releases: releases
+      }
+    end)
+    |> Enum.filter(fn %{releases: releases} -> length(releases) > 0 end)
   end
 
   @doc """

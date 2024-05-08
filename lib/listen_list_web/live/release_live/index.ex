@@ -5,7 +5,11 @@ defmodule ListenListWeb.ReleaseLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, releases: Music.list_top_releases(:week), selected_period: :week)}
+    {:ok,
+     assign(socket,
+       releases: Music.list_top_releases(:week),
+       selected_period: :week
+     )}
   end
 
   @impl true
