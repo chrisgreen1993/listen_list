@@ -25,4 +25,12 @@ defmodule ListenList.Utils.Time do
       %{start_date: start_date, end_date: end_date}
     end)
   end
+
+  # Checks whether a date is in this week, month, year
+  def date_in_latest_period?(start_date, period, week_start, now \\ DateTime.utc_now()) do
+    period_start_today = beginning_of_period(now, period, week_start)
+
+    DateTime.compare(period_start_today, start_date) ==
+      :eq
+  end
 end

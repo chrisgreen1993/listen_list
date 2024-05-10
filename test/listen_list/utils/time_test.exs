@@ -52,4 +52,42 @@ defmodule ListenList.Utils.TimeTest do
              ]
     end
   end
+
+  describe "date_in_latest_period?" do
+    test "returns true when current date is within the latest period for the period" do
+      now = ~U[2024-01-06T00:00:00Z]
+      period_start = ~U[2024-01-04T00:00:00Z]
+      assert Time.date_in_latest_period?(period_start, :week, :thursday, now)
+    end
+
+    test "returns false when current date is not within the latest period for weeks" do
+      now = ~U[2024-01-06T00:00:00Z]
+      period_start = ~U[2023-12-28T00:00:00Z]
+      refute Time.date_in_latest_period?(period_start, :week, :thursday, now)
+    end
+
+    test "returns true when current date is within the latest period for months" do
+      now = ~U[2024-01-06T00:00:00Z]
+      period_start = ~U[2024-01-01T00:00:00Z]
+      assert Time.date_in_latest_period?(period_start, :month, :thursday, now)
+    end
+
+    test "returns false when current date is not within the latest period for months" do
+      now = ~U[2024-01-06T00:00:00Z]
+      period_start = ~U[2023-12-01T00:00:00Z]
+      refute Time.date_in_latest_period?(period_start, :month, :thursday, now)
+    end
+
+    test "returns true when current date is within the latest period for years" do
+      now = ~U[2024-01-06T00:00:00Z]
+      period_start = ~U[2024-01-01T00:00:00Z]
+      assert Time.date_in_latest_period?(period_start, :year, :thursday, now)
+    end
+
+    test "returns false when current date is not within the latest period for years" do
+      now = ~U[2024-01-06T00:00:00Z]
+      period_start = ~U[2023-01-01T00:00:00Z]
+      refute Time.date_in_latest_period?(period_start, :year, :thursday, now)
+    end
+  end
 end
