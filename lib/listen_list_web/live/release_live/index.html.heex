@@ -10,7 +10,7 @@
 </form>
 
 <%= for %{period_start: period_start, period_end: period_end, releases: releases} <- @releases do %>
-  <h2 class="font-bold text-2xl p-4">
+  <h2 class="font-bold text-2xl md:text-3xl py-8">
     <%= humanize_releases_period_date(period_start, @selected_period) %>
   </h2>
   <ol class="py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
