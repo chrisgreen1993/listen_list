@@ -9,10 +9,25 @@
   />
 </form>
 
-<%= for %{period_start: period_start, period_end: period_end, releases: releases} <- @releases do %>
-  <h2 class="font-bold text-2xl md:text-3xl py-8">
-    <%= humanize_releases_period_date(period_start, @selected_period) %>
-  </h2>
+<%= for {%{period_start: period_start, period_end: period_end, releases: releases}, inx} <- Enum.with_index(@releases) do %>
+  <div class="flex justify-between align-baseline flex-col sm:flex-row py-8">
+    <h2 id={"#{@selected_period}-#{inx}"} class="font-bold text-xl md:text-3xl">
+      <%= humanize_releases_period_date(period_start, @selected_period) %>
+    </h2>
+    <%= if inx < length(@releases) - 1 do %>
+      <a
+        class="pt-2 sm:pt-0 text-blue-500 font-bold underline text-xl md:text-2xl"
+        href={"##{@selected_period}-#{inx + 1}"}
+      >
+        Next <%= @selected_period %> ↓
+      </a>
+    <% else %>
+      <a class="pt-2 sm:pt-0 text-blue-500 font-bold underline text-xl md:text-2xl" href="#">
+        Back to top ↑
+      </a>
+    <% end %>
+  </div>
+
   <ol class="py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
     <%= for release <- releases do %>
       <li class="rounded overflow-hidden shadow-lg">
