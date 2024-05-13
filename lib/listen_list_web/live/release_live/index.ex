@@ -30,7 +30,7 @@ defmodule ListenListWeb.ReleaseLive.Index do
         [:week, false] ->
           # The period starts on Thursday to catch releases due to timezones etc, but we want to display as Friday.
           friday = Timex.shift(start_date, days: 1)
-          "for " <> Calendar.strftime(friday, "%A %B %d, %Y")
+          "for " <> Calendar.strftime(friday, "%A %d %b, %Y")
 
         [:month, false] ->
           "for " <> Calendar.strftime(start_date, "%B %Y")
