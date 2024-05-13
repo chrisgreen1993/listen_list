@@ -8,7 +8,7 @@ import Config
 config :listen_list, ListenListWeb.Endpoint,
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json",
-  check_origin: ["https://listen-list.fly.dev"]
+  check_origin: ["https://listen-list.fly.dev", "https://listenlist.app"]
 
 # Enable background jobs in prod
 config :listen_list, :enable_jobs, true
