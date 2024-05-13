@@ -37,7 +37,7 @@ defmodule ListenList.Music do
     Repo.all(query)
   end
 
-  def list_top_releases(:week), do: list_top_releases_grouped_by_period(:week, 10, 4)
+  def list_top_releases(:week), do: list_top_releases_grouped_by_period(:week, 10, 8)
   def list_top_releases(:month), do: list_top_releases_grouped_by_period(:month, 20, 12)
   def list_top_releases(:year), do: list_top_releases_grouped_by_period(:year, 50, 4)
 
