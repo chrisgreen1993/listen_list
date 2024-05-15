@@ -31,11 +31,10 @@
   <ol class="py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
     <%= for release <- releases do %>
       <li class="rounded overflow-hidden shadow-lg">
-        <a
+        <.link
           class="flex flex-col h-full"
-          href={release.post_url}
-          target="_blank"
-          rel="noopener noreferrer"
+          phx-click="show_release_modal"
+          phx-value-id={release.id}
         >
           <%= if release.thumbnail_url do %>
             <img
@@ -53,8 +52,21 @@
           <p class="px-6 py-4 text-sm text-gray-600">
             <%= Calendar.strftime(release.post_created_at, "%a, %B %d %Y") %>
           </p>
-        </a>
+        </.link>
       </li>
     <% end %>
   </ol>
 <% end %>
+
+<.modal :if={@release} id="release-modal" show on_cancel={JS.push("hide_release_modal")}>
+  <h2 class="font-bold text-xl mb-2"><%= @release.album %></h2>
+  <p class="text-gray-700 text-base"><%= @release.artist %></p>
+  <div :if={@release.post_raw["secure_media"]} class="[&>iframe]:w-full mt-4">
+    <%= raw(HtmlEntities.decode(@release.post_raw["secure_media"]["oembed"]["html"])) %>
+  </div>
+  <p class="text-gray-700 mt-4">
+    Links: <a href={@release.post_url} class="text-blue-400 underline">Reddit</a>
+    |
+    <a href={@release.url} class="text-blue-400 underline"><%= URI.parse(@release.url).host %></a>
+  </p>
+</.modal>

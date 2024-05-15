@@ -9,14 +9,27 @@ defmodule ListenListWeb.ReleaseLive.Index do
     {:ok,
      assign(socket,
        releases: Music.list_top_releases(:week),
-       selected_period: :week
+       selected_period: :week,
+       release: nil
      )}
   end
 
   @impl true
   def handle_event("change_period", %{"period" => period}, socket) do
     releases = Music.list_top_releases(String.to_atom(period))
-    {:noreply, assign(socket, releases: releases, selected_period: String.to_atom(period))}
+
+    {:noreply,
+     assign(socket, releases: releases, selected_period: String.to_atom(period), release: nil)}
+  end
+
+  @impl true
+  def handle_event("show_release_modal", %{"id" => id}, socket) do
+    release = Music.get_release!(id)
+    {:noreply, assign(socket, release: release)}
+  end
+
+  def handle_event("hide_release_modal", _params, socket) do
+    {:noreply, assign(socket, release: nil)}
   end
 
   def humanize_releases_period_date(start_date, period) do
