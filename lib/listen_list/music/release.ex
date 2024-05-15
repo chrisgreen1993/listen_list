@@ -14,6 +14,7 @@ defmodule ListenList.Music.Release do
     field :post_created_at, :utc_datetime_usec
     field :import_status, Ecto.Enum, values: [:auto, :in_review, :manual, :rejected]
     field :import_type, Ecto.Enum, values: [:api, :file]
+    field :embed, :map
 
     timestamps(type: :utc_datetime_usec)
   end
@@ -32,7 +33,8 @@ defmodule ListenList.Music.Release do
       :post_raw,
       :post_created_at,
       :import_status,
-      :import_type
+      :import_type,
+      :embed
     ])
     |> validate_required([
       :url,

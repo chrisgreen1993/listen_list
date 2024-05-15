@@ -14,7 +14,8 @@ defmodule ListenList.Reddit.Utils do
       "score" => &%{score: &1},
       "permalink" => &%{post_url: "https://reddit.com" <> &1},
       "created_utc" => &created_timestamp_to_post_created_at/1,
-      "thumbnail" => &%{thumbnail_url: if(&1 == "default", do: nil, else: &1)}
+      "thumbnail" => &%{thumbnail_url: if(&1 == "default", do: nil, else: &1)},
+      "secure_media" => &%{embed: &1["oembed"]}
     }
   end
 

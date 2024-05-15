@@ -32,7 +32,8 @@ defmodule ListenList.Reddit.UtilsTest do
         :thumbnail_url,
         :post_raw,
         :import_status,
-        :import_type
+        :import_type,
+        :embed
       ]
 
       expected_keys |> Enum.all?(&Map.has_key?(release, &1))
@@ -47,7 +48,8 @@ defmodule ListenList.Reddit.UtilsTest do
           "score" => 100,
           "permalink" => "/r/indieheads/123",
           "created_utc" => 1_614_556_800,
-          "thumbnail" => "https://thumbnail.com"
+          "thumbnail" => "https://thumbnail.com",
+          "secure_media" => %{"oembed" => %{"html" => "<iframe></iframe>"}}
         },
         overrides
       )
@@ -142,6 +144,13 @@ defmodule ListenList.Reddit.UtilsTest do
       release = Utils.post_to_release(post, :file)
       assert release_has_expected_keys?(release)
       assert release[:import_type] == :file
+    end
+
+    test "returns a release with the embed data" do
+      post = post_fixture()
+      release = Utils.post_to_release(post, :api)
+      assert release_has_expected_keys?(release)
+      assert release[:embed] == %{"html" => "<iframe></iframe>"}
     end
   end
 end
