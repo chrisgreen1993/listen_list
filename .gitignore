@@ -37,3 +37,6 @@ npm-debug.log
 
 # Ignore .env files
 .env.dev
+
+# Ignore my todo list
+TODO.md
