@@ -49,8 +49,8 @@ defmodule ListenList.Music do
 
       %{
         period_type: period,
-        period_start: start_date,
-        period_end: end_date,
+        period_start: DateTime.to_date(start_date),
+        period_end: DateTime.to_date(end_date),
         releases: releases
       }
     end)

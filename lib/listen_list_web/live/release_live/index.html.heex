@@ -9,12 +9,12 @@
   />
 </form>
 
-<%= for {%{period_start: period_start, period_end: _period_end, releases: releases}, inx} <- Enum.with_index(@releases) do %>
+<%= for {%{period_start: period_start, period_end: period_end, releases: releases}, inx} <- Enum.with_index(@releases) do %>
   <.period_header
     period={@selected_period}
     period_start_date={period_start}
-    index={inx}
-    period_length={length(@releases)}
+    period_end_date={period_end}
+    last_period?={inx == length(@releases) - 1}
   />
 
   <div class="py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">

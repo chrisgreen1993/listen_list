@@ -1,36 +1,35 @@
 defmodule ListenListWeb.Components.PeriodHeader do
   use Phoenix.Component
-  alias ListenList.Utils.Time
 
   attr :period, :string
   attr :period_start_date, :string
-  attr :period_length, :integer
-  attr :index, :string
+  attr :period_end_date, :string
+  attr :last_period?, :boolean
 
   def period_header(assigns) do
     ~H"""
     <div class="flex justify-between align-baseline flex-col sm:flex-row py-8">
-      <h2 id={"#{@period}-#{@index}"} class="font-bold text-xl md:text-3xl">
-        <%= humanize_releases_period_date(@period_start_date, @period) %>
+      <h2 id={@period_end_date} class="font-bold text-xl md:text-3xl">
+        <%= humanize_releases_period_date(@period_start_date, @period_end_date, @period) %>
       </h2>
-      <%= if @index < @period_length - 1 do %>
-        <a
-          class="pt-2 sm:pt-0 text-blue-500 font-bold underline text-xl md:text-2xl"
-          href={"##{@period}-#{@index + 1}"}
-        >
-          Previous <%= @period %> ↓
-        </a>
-      <% else %>
+      <%= if @last_period? do %>
         <a class="pt-2 sm:pt-0 text-blue-500 font-bold underline text-xl md:text-2xl" href="#">
           Back to top ↑
+        </a>
+      <% else %>
+        <a
+          class="pt-2 sm:pt-0 text-blue-500 font-bold underline text-xl md:text-2xl"
+          href={"##{@period_start_date}"}
+        >
+          Previous <%= @period %> ↓
         </a>
       <% end %>
     </div>
     """
   end
 
-  defp humanize_releases_period_date(start_date, period) do
-    latest_period? = Time.date_in_latest_period?(start_date, period, :thursday)
+  defp humanize_releases_period_date(start_date, end_date, period) do
+    latest_period? = Date.compare(Date.utc_today(), end_date) == :lt
 
     formatted_date =
       case [period, latest_period?] do
