@@ -1,4 +1,4 @@
-defmodule ListenList.Jobs.FetchReleasesJob do
+defmodule ListenList.Jobs.ImportReleasesJob do
   use GenServer
 
   alias ListenList.Reddit
@@ -11,23 +11,23 @@ defmodule ListenList.Jobs.FetchReleasesJob do
 
   @impl true
   def init(period_in_millis) do
-    handle_info(:fetch_releases, period_in_millis)
+    handle_info(:import_releases, period_in_millis)
     {:ok, period_in_millis}
   end
 
   @impl true
-  def handle_info(:fetch_releases, period_in_millis) do
-    fetch_releases()
+  def handle_info(:import_releases, period_in_millis) do
+    import()
     schedule_work(period_in_millis)
     {:noreply, period_in_millis}
   end
 
   defp schedule_work(period_in_millis) do
-    Process.send_after(self(), :fetch_releases, period_in_millis)
+    Process.send_after(self(), :import_releases, period_in_millis)
   end
 
-  def fetch_releases do
-    Logger.info("Fetching new releases")
+  def import do
+    Logger.info("Importing new releases")
     access_token = Reddit.API.fetch_access_token()
     releases = Reddit.API.fetch_new_releases(access_token)
     {changed_rows, _} = Music.create_or_update_releases(releases)

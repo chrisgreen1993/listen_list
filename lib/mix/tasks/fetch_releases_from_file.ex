@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.FetchReleasesFromFile do
+defmodule Mix.Tasks.ImportReleasesFromFile do
   alias ListenList.Music
   alias ListenList.Repo
   use Mix.Task
@@ -13,7 +13,7 @@ defmodule Mix.Tasks.FetchReleasesFromFile do
     chunk_size = opts |> Enum.at(1) |> maybe_to_integer()
 
     Logger.info(
-      "Fetching #{if limit, do: limit, else: "all"} releases from #{file_path} - Chunk size: #{if chunk_size, do: chunk_size, else: 200}"
+      "Importing #{if limit, do: limit, else: "all"} releases from #{file_path} - Chunk size: #{if chunk_size, do: chunk_size, else: 200}"
     )
 
     # Run this in a transaction so we can rollback them all if something goes wrong

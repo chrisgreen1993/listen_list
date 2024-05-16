@@ -25,7 +25,7 @@ defmodule ListenList.Application do
         children ++
           [
             # Run every hour
-            {ListenList.Jobs.FetchReleasesJob, 1000 * 60 * 60}
+            {ListenList.Jobs.ImportReleasesJob, 1000 * 60 * 60}
           ]
       else
         children
