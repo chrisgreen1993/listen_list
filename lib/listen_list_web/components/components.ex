@@ -3,7 +3,8 @@ defmodule ListenListWeb.Components do
     quote do
       import unquote(__MODULE__).{
         ReleaseCard,
-        PeriodHeader
+        PeriodHeader,
+        ReleaseModal
       }
     end
   end
