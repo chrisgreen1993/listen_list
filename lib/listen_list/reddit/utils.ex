@@ -10,13 +10,19 @@ defmodule ListenList.Reddit.Utils do
     %{
       "id" => &%{reddit_id: &1},
       "title" => &title_to_artist_and_album/1,
-      "url" => &%{url: &1},
+      "url" => &%{url: remove_invalid_url(&1)},
       "score" => &%{score: &1},
       "permalink" => &%{post_url: "https://reddit.com" <> &1},
       "created_utc" => &created_timestamp_to_post_created_at/1,
-      "thumbnail" => &%{thumbnail_url: if(&1 == "default", do: nil, else: &1)},
+      "thumbnail" => &%{thumbnail_url: remove_invalid_url(&1)},
       "secure_media" => &%{embed: &1["oembed"]}
     }
+  end
+
+  def remove_invalid_url(url) do
+    uri = URI.parse(url)
+    valid? = uri.scheme != nil && uri.host =~ "."
+    if valid?, do: url, else: nil
   end
 
   # Check that the title is valid and that the post has not been removed

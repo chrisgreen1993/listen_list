@@ -90,15 +90,15 @@ defmodule ListenList.Reddit.UtilsTest do
       assert release[:post_created_at] == DateTime.from_unix!(1_614_556_800)
     end
 
-    test "returns a release with thumbnail_url" do
+    test "returns a release with thumbnail_url if the url is valid" do
       post = post_fixture()
       release = Utils.post_to_release(post, :api)
       assert release_has_expected_keys?(release)
       assert release[:thumbnail_url] == "https://thumbnail.com"
     end
 
-    test "returns a release with thumbnail_url as nil if its default" do
-      post = post_fixture(%{"thumbnail" => "default"})
+    test "returns a release with thumbnail_url as nil if the url is invalid" do
+      post = post_fixture(%{"thumbnail" => "invalid_url"})
       release = Utils.post_to_release(post, :api)
       assert release_has_expected_keys?(release)
       assert release[:thumbnail_url] == nil
@@ -151,6 +151,20 @@ defmodule ListenList.Reddit.UtilsTest do
       release = Utils.post_to_release(post, :api)
       assert release_has_expected_keys?(release)
       assert release[:embed] == %{"html" => "<iframe></iframe>"}
+    end
+
+    test "returns a release with the url if it is valid" do
+      post = post_fixture()
+      release = Utils.post_to_release(post, :api)
+      assert release_has_expected_keys?(release)
+      assert release[:url] == "https://reddit.com"
+    end
+
+    test "returns a release with the url as nil if it is invalid" do
+      post = post_fixture(%{"url" => "invalid_url"})
+      release = Utils.post_to_release(post, :api)
+      assert release_has_expected_keys?(release)
+      assert release[:url] == nil
     end
   end
 end
