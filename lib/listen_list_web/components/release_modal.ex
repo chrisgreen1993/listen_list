@@ -17,9 +17,11 @@ defmodule ListenListWeb.Components.ReleaseModal do
         <%= raw(HtmlEntities.decode(@release.embed["html"])) %>
       </div>
       <p class="text-gray-700 mt-4">
-        Links: <a href={@release.post_url} class="text-blue-400 underline">Reddit</a>
+        Links: <a href={@release.post_url} target="_blank" class="text-blue-400 underline">Reddit</a>
         |
-        <a href={@release.url} class="text-blue-400 underline"><%= URI.parse(@release.url).host %></a>
+        <a href={@release.url} target="_blank" class="text-blue-400 underline">
+          <%= URI.parse(@release.url).host %>
+        </a>
       </p>
     </.modal>
     """
