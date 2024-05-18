@@ -22,11 +22,7 @@ defmodule ListenList.Application do
 
     children =
       if Application.get_env(:listen_list, :enable_jobs, false) do
-        children ++
-          [
-            # Run every hour
-            {ListenList.Jobs.ImportReleasesJob, 1000 * 60 * 60}
-          ]
+        children ++ [ListenList.Scheduler]
       else
         children
       end

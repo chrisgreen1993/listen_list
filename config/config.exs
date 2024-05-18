@@ -61,6 +61,16 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :listen_list, ListenList.Scheduler,
+  jobs: [
+    import_releases: [
+      # Don't run the job if it's already running
+      overlap: false,
+      schedule: "@hourly",
+      task: {ListenList.Jobs.ImportReleasesJob, :run, []}
+    ]
+  ]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
