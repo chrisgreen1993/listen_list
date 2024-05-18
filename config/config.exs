@@ -62,11 +62,20 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :listen_list, ListenList.Scheduler,
+  # Don't run the job if it's already running
+  overlap: false,
   jobs: [
-    import_releases: [
-      # Don't run the job if it's already running
-      overlap: false,
-      schedule: "@hourly",
+    import_releases_friday_to_saturday: [
+      # Import every 30 minutes on Thursdays, Fridays, and Saturdays
+      # Most new music is released late Thursday / early Friday UTC time.
+      # We also want to keep the data fresh on Saturday.
+      schedule: "*/30 * * * 4-6",
+      task: {ListenList.Jobs.ImportReleasesJob, :run, []}
+    ],
+    import_releases_rest_of_week: [
+      # The rest of the week, we import every 2 hours
+      # There's not many new releases, but we keep the reddit data fairly fresh
+      schedule: "0 */2 * * 0-3",
       task: {ListenList.Jobs.ImportReleasesJob, :run, []}
     ]
   ]
