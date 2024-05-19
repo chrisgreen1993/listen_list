@@ -1,18 +1,37 @@
-# ListenList
+# Listen List 🎸🎧
 
-To start your Phoenix server:
+[listenlist.app](https://listenist.app)
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+An app for discovering new music from [reddit.com/r/indieheads](https://reddit.com/r/indieheads)
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+Built with Elixir, Phoenix and PostgreSQL
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+## Development
 
-## Learn more
+Install required dependencies for Phoenix first, via [this guide](https://hexdocs.pm/phoenix/installation.html)
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+```
+git clone https://github.com/chrisgreen1993/listen_list.git
+cd listen_list
+
+# Set your env vars in .env.dev
+cp .env.template .env.dev
+source .env.dev
+
+# Install deps, setup DB etc
+mix setup
+
+# Run the server (localhost:4000)
+mix phx.server
+
+# Run tests
+mix test
+
+# Import latest data from api
+mix import_releases_from_api
+
+# import all historical data from arctic shift dump file
+# https://arctic-shift.photon-reddit.com/download-tool 
+# (r/indieheads - submissions only)
+mix import_releases_from_file [filepath]
+```
