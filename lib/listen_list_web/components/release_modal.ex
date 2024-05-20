@@ -10,7 +10,7 @@ defmodule ListenListWeb.Components.ReleaseModal do
 
   def release_modal(assigns) do
     ~H"""
-    <.modal :if={@release} id="release-modal" show on_cancel={JS.push(@on_cancel)}>
+    <.modal id="release-modal" show on_cancel={JS.push(@on_cancel)}>
       <h2 class="font-bold text-xl mb-2"><%= @release.album %></h2>
       <p class="text-gray-700 text-base"><%= @release.artist %></p>
       <div :if={@release.embed} class="[&>iframe]:w-full mt-4">
