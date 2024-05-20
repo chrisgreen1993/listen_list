@@ -18,7 +18,16 @@
   />
 
   <div class="py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-    <.release_card :for={release <- releases} release={release} on_click="show_release_modal" />
+    <!-- 
+    We lazy load cards that aren't in the first period 
+    as they will be in the viewport immediately
+    -->
+    <.release_card
+      :for={release <- releases}
+      release={release}
+      on_click="show_release_modal"
+      lazy_load?={inx > 0}
+    />
   </div>
 <% end %>
 
