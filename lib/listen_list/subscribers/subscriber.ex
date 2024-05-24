@@ -4,9 +4,7 @@ defmodule ListenList.Subscribers.Subscriber do
 
   schema "subscribers" do
     field :name, :string
-    field :token, :string
     field :email, :string
-    field :token_created_at, :utc_datetime_usec
     field :confirmed_at, :utc_datetime_usec
 
     timestamps(type: :utc_datetime_usec)
@@ -15,7 +13,12 @@ defmodule ListenList.Subscribers.Subscriber do
   @doc false
   def changeset(subscriber, attrs) do
     subscriber
-    |> cast(attrs, [:name, :email, :token_created_at, :token, :confirmed_at])
-    |> validate_required([:name, :email, :token_created_at, :token, :confirmed_at])
+    |> cast(attrs, [:name, :email, :confirmed_at])
+    |> validate_required([:name, :email])
+    |> unique_constraint(:email)
+  end
+
+  def confirm_changeset(subscriber) do
+    change(subscriber, confirmed_at: DateTime.utc_now())
   end
 end

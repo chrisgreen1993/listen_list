@@ -13,9 +13,7 @@ defmodule ListenList.SubscribersFixtures do
       |> Enum.into(%{
         confirmed_at: ~U[2024-05-22 06:02:00.000000Z],
         email: "some email",
-        name: "some name",
-        token: "some token",
-        token_created_at: ~U[2024-05-22 06:02:00.000000Z]
+        name: "some name"
       })
       |> ListenList.Subscribers.create_subscriber()
 

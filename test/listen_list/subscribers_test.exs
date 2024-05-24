@@ -8,7 +8,7 @@ defmodule ListenList.SubscribersTest do
 
     import ListenList.SubscribersFixtures
 
-    @invalid_attrs %{name: nil, token: nil, email: nil, token_created_at: nil, confirmed_at: nil}
+    @invalid_attrs %{name: nil, email: nil, confirmed_at: nil}
 
     test "list_subscribers/0 returns all subscribers" do
       subscriber = subscriber_fixture()
@@ -21,13 +21,15 @@ defmodule ListenList.SubscribersTest do
     end
 
     test "create_subscriber/1 with valid data creates a subscriber" do
-      valid_attrs = %{name: "some name", token: "some token", email: "some email", token_created_at: ~U[2024-05-22 06:02:00.000000Z], confirmed_at: ~U[2024-05-22 06:02:00.000000Z]}
+      valid_attrs = %{
+        name: "some name",
+        email: "some email",
+        confirmed_at: ~U[2024-05-22 06:02:00.000000Z]
+      }
 
       assert {:ok, %Subscriber{} = subscriber} = Subscribers.create_subscriber(valid_attrs)
       assert subscriber.name == "some name"
-      assert subscriber.token == "some token"
       assert subscriber.email == "some email"
-      assert subscriber.token_created_at == ~U[2024-05-22 06:02:00.000000Z]
       assert subscriber.confirmed_at == ~U[2024-05-22 06:02:00.000000Z]
     end
 
@@ -37,19 +39,27 @@ defmodule ListenList.SubscribersTest do
 
     test "update_subscriber/2 with valid data updates the subscriber" do
       subscriber = subscriber_fixture()
-      update_attrs = %{name: "some updated name", token: "some updated token", email: "some updated email", token_created_at: ~U[2024-05-23 06:02:00.000000Z], confirmed_at: ~U[2024-05-23 06:02:00.000000Z]}
 
-      assert {:ok, %Subscriber{} = subscriber} = Subscribers.update_subscriber(subscriber, update_attrs)
+      update_attrs = %{
+        name: "some updated name",
+        email: "some updated email",
+        confirmed_at: ~U[2024-05-23 06:02:00.000000Z]
+      }
+
+      assert {:ok, %Subscriber{} = subscriber} =
+               Subscribers.update_subscriber(subscriber, update_attrs)
+
       assert subscriber.name == "some updated name"
-      assert subscriber.token == "some updated token"
       assert subscriber.email == "some updated email"
-      assert subscriber.token_created_at == ~U[2024-05-23 06:02:00.000000Z]
       assert subscriber.confirmed_at == ~U[2024-05-23 06:02:00.000000Z]
     end
 
     test "update_subscriber/2 with invalid data returns error changeset" do
       subscriber = subscriber_fixture()
-      assert {:error, %Ecto.Changeset{}} = Subscribers.update_subscriber(subscriber, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Subscribers.update_subscriber(subscriber, @invalid_attrs)
+
       assert subscriber == Subscribers.get_subscriber!(subscriber.id)
     end
 
