@@ -73,5 +73,22 @@ defmodule ListenList.SubscribersTest do
       subscriber = subscriber_fixture()
       assert %Ecto.Changeset{} = Subscribers.change_subscriber(subscriber)
     end
+
+    test "confirm_subscriber_by_token/1 confirms the subscriber if the token is valid" do
+      subscriber = subscriber_fixture(%{confirmed_at: nil})
+      token = Subscribers.generate_signed_token(subscriber.id)
+      assert {:ok, %Subscriber{} = subscriber} = Subscribers.confirm_subscriber_by_token(token)
+      assert %DateTime{} = subscriber.confirmed_at
+    end
+
+    test "confirm_subscriber_by_token/1 returns an error if the token is invalid" do
+      assert {:error, :invalid_token} = Subscribers.confirm_subscriber_by_token("invalid token")
+    end
+
+    test "confirm_subscriber_by_token/1 returns an error if the subscriber is not found" do
+      subscriber_fixture(%{confirmed_at: nil})
+      token = Subscribers.generate_signed_token(123)
+      assert {:error, :not_found} = Subscribers.confirm_subscriber_by_token(token)
+    end
   end
 end
