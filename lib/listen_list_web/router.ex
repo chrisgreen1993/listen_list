@@ -18,6 +18,7 @@ defmodule ListenListWeb.Router do
     pipe_through :browser
 
     live "/", ReleaseLive.Index, :index
+    get "/subscribers/confirm/:token", SubscriberController, :confirm
   end
 
   # Other scopes may use custom stacks.
