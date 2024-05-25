@@ -15,6 +15,14 @@ defmodule ListenList.SubscribersTest do
       assert Subscribers.list_subscribers() == [subscriber]
     end
 
+    test "list_confirmed_subscribers/0 returns all confirmed subscribers" do
+      confirmed_subscriber =
+        subscriber_fixture(%{email: "email1", confirmed_at: ~U[2024-05-22 06:02:00.000000Z]})
+
+      subscriber_fixture(%{email: "email2", confirmed_at: nil})
+      assert Subscribers.list_confirmed_subscribers() == [confirmed_subscriber]
+    end
+
     test "get_subscriber!/1 returns the subscriber with given id" do
       subscriber = subscriber_fixture()
       assert Subscribers.get_subscriber!(subscriber.id) == subscriber

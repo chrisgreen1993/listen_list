@@ -21,6 +21,10 @@ defmodule ListenList.Subscribers do
     Repo.all(Subscriber)
   end
 
+  def list_confirmed_subscribers do
+    Repo.all(from s in Subscriber, where: not is_nil(s.confirmed_at))
+  end
+
   @doc """
   Gets a single subscriber.
 
