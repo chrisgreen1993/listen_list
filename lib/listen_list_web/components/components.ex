@@ -4,7 +4,8 @@ defmodule ListenListWeb.Components do
       import unquote(__MODULE__).{
         ReleaseCard,
         PeriodHeader,
-        ReleaseModal
+        ReleaseModal,
+        SubscribeModal
       }
     end
   end
