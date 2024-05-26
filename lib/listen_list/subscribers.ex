@@ -7,6 +7,7 @@ defmodule ListenList.Subscribers do
   alias ListenList.Repo
 
   alias ListenList.Subscribers.Subscriber
+  alias ListenList.Subscribers.Token
 
   @doc """
   Returns the list of subscribers.
@@ -63,10 +64,7 @@ defmodule ListenList.Subscribers do
   end
 
   def confirm_subscriber_by_token(token) do
-    # 24 hours
-    max_age = 24 * 60 * 60
-
-    with {:ok, id} <- verify_signed_token(token, max_age),
+    with {:ok, id} <- Token.verify_confirm_token(token),
          subscriber when not is_nil(subscriber) <- Repo.get(Subscriber, id) do
       subscriber
       |> Subscriber.confirm_changeset()
@@ -75,14 +73,6 @@ defmodule ListenList.Subscribers do
       nil -> {:error, :not_found}
       _ -> {:error, :invalid_token}
     end
-  end
-
-  def generate_signed_token(id) do
-    Phoenix.Token.sign(ListenListWeb.Endpoint, "subscriber", id)
-  end
-
-  def verify_signed_token(token, max_age) do
-    Phoenix.Token.verify(ListenListWeb.Endpoint, "subscriber", token, max_age: max_age)
   end
 
   @doc """
@@ -117,6 +107,16 @@ defmodule ListenList.Subscribers do
   """
   def delete_subscriber(%Subscriber{} = subscriber) do
     Repo.delete(subscriber)
+  end
+
+  def delete_subscriber_by_token(token) do
+    with {:ok, id} <- Token.verify_unsubscribe_token(token),
+         subscriber when not is_nil(subscriber) <- Repo.get(Subscriber, id) do
+      Repo.delete(subscriber)
+    else
+      nil -> {:error, :not_found}
+      _ -> {:error, :invalid_token}
+    end
   end
 
   @doc """

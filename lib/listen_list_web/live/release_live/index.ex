@@ -45,7 +45,7 @@ defmodule ListenListWeb.ReleaseLive.Index do
   def handle_event("create_subscriber", %{"name" => name, "email" => email}, socket) do
     case Subscribers.create_subscriber(%{"name" => name, "email" => email}) do
       {:ok, subscriber} ->
-        token = Subscribers.generate_signed_token(subscriber.id)
+        token = Subscribers.Token.sign_confirm_token(subscriber.id)
         Email.subscribe_confirmation(subscriber, token) |> Mailer.deliver()
 
         {:noreply,

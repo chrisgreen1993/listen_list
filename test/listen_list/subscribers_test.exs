@@ -5,6 +5,7 @@ defmodule ListenList.SubscribersTest do
 
   describe "subscribers" do
     alias ListenList.Subscribers.Subscriber
+    alias ListenList.Subscribers.Token
 
     import ListenList.SubscribersFixtures
 
@@ -84,7 +85,7 @@ defmodule ListenList.SubscribersTest do
 
     test "confirm_subscriber_by_token/1 confirms the subscriber if the token is valid" do
       subscriber = subscriber_fixture(%{confirmed_at: nil})
-      token = Subscribers.generate_signed_token(subscriber.id)
+      token = Token.sign_confirm_token(subscriber.id)
       assert {:ok, %Subscriber{} = subscriber} = Subscribers.confirm_subscriber_by_token(token)
       assert %DateTime{} = subscriber.confirmed_at
     end
@@ -95,8 +96,26 @@ defmodule ListenList.SubscribersTest do
 
     test "confirm_subscriber_by_token/1 returns an error if the subscriber is not found" do
       subscriber_fixture(%{confirmed_at: nil})
-      token = Subscribers.generate_signed_token(123)
+      token = Token.sign_confirm_token(123)
       assert {:error, :not_found} = Subscribers.confirm_subscriber_by_token(token)
+    end
+
+    test "delete_subscriber_by_token/1 deletes the subscriber if the token is valid" do
+      subscriber = subscriber_fixture()
+      assert %Subscriber{} = Subscribers.get_subscriber!(subscriber.id)
+      token = Token.sign_unsubscribe_token(subscriber.id)
+      assert {:ok, %Subscriber{}} = Subscribers.delete_subscriber_by_token(token)
+      assert_raise Ecto.NoResultsError, fn -> Subscribers.get_subscriber!(subscriber.id) end
+    end
+
+    test "delete_subscriber_by_token/1 returns an error if the token is invalid" do
+      assert {:error, :invalid_token} = Subscribers.delete_subscriber_by_token("invalid token")
+    end
+
+    test "delete_subscriber_by_token/1 returns an error if the subscriber is not found" do
+      subscriber_fixture()
+      token = Token.sign_unsubscribe_token(123)
+      assert {:error, :not_found} = Subscribers.delete_subscriber_by_token(token)
     end
   end
 end

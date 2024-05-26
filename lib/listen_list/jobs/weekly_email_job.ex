@@ -11,7 +11,13 @@ defmodule ListenList.Jobs.WeeklyEmailJob do
     releases = Music.list_top_releases_this_week()
 
     if releases do
-      Email.weekly_releases(subscribers, releases) |> Mailer.deliver()
+      subscribers
+      |> Enum.map(fn subscriber ->
+        token = Subscribers.Token.sign_unsubscribe_token(subscriber.id)
+        Email.weekly_releases(subscriber, releases, token)
+      end)
+      |> Mailer.deliver_many()
+
       Logger.info("Weekly email sent")
     else
       Logger.warning("No releases: Cannot send weekly email")

@@ -1,12 +1,12 @@
 defmodule ListenList.Email do
   import Swoosh.Email
 
-  def subscribe_confirmation(subscriber, token) do
+  def subscribe_confirmation(subscriber, confirm_token) do
     new()
     |> to({subscriber.name, subscriber.email})
     |> from({"Listen List", "notifications@listenlist.app"})
     |> subject("Confirm your email")
-    |> html_body(build_subscribe_confirmation_html(subscriber, token))
+    |> html_body(build_subscribe_confirmation_html(subscriber, confirm_token))
   end
 
   # TODO: Update this to use mailgun templates
@@ -19,27 +19,26 @@ defmodule ListenList.Email do
     """
   end
 
-  def weekly_releases(subscribers, releases) do
-    recipients =
-      Enum.map(subscribers, fn subscriber ->
-        {subscriber.name, subscriber.email}
-      end)
-
+  def weekly_releases(subscriber, releases, unsubscribe_token) do
     new()
-    |> to(recipients)
+    |> to({subscriber.name, subscriber.email})
     |> from({"Listen List", "notifications@listenlist.app"})
     |> subject("New music for this week!")
-    |> html_body(build_weekly_releases_html(releases.releases))
+    |> html_body(build_weekly_releases_html(releases.releases, unsubscribe_token))
   end
 
   # TODO: Update this to use mailgun templates
-  defp build_weekly_releases_html(releases) do
-    body =
+  defp build_weekly_releases_html(releases, token) do
+    releases_html =
       Enum.map(releases, fn release ->
         "<p>#{release.artist} - #{release.album}</p>"
       end)
       |> Enum.join("\n")
 
-    "<h1>New Releases</h1>\n#{body}"
+    """
+    <h1>New Releases</h1>
+    #{releases_html}"
+    <p><a href="#{ListenListWeb.Endpoint.url()}/subscribers/unsubscribe/#{token}">Unsubscribe</a></p>
+    """
   end
 end

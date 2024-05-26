@@ -19,6 +19,7 @@ defmodule ListenListWeb.Router do
 
     live "/", ReleaseLive.Index, :index
     get "/subscribers/confirm/:token", SubscriberController, :confirm
+    get "/subscribers/unsubscribe/:token", SubscriberController, :unsubscribe
   end
 
   # Other scopes may use custom stacks.
