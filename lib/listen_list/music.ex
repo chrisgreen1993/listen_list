@@ -41,7 +41,12 @@ defmodule ListenList.Music do
   def list_top_releases(:month), do: list_top_releases_grouped_by_period(:month, 20, 12)
   def list_top_releases(:year), do: list_top_releases_grouped_by_period(:year, 50, 4)
 
-  def list_top_releases_grouped_by_period(period, max_per_period, max_periods) do
+  def list_top_releases_this_week() do
+    list_top_releases_grouped_by_period(:week, 10, 1)
+    |> Enum.at(0)
+  end
+
+  defp list_top_releases_grouped_by_period(period, max_per_period, max_periods) do
     # For weeks, we start the week on Thursday as most stuff is released on Fridays
     Time.past_intervals_for_period(DateTime.utc_now(), period, max_periods, :thursday)
     |> Enum.map(fn %{start_date: start_date, end_date: end_date} ->

@@ -65,6 +65,12 @@ config :listen_list, ListenList.Scheduler,
   # Don't run the job if it's already running
   overlap: false,
   jobs: [
+    send_weekly_releases_email: [
+      # Send weekly email every Saturday at 19:10 UTC
+      # We send at 10 minutes past so we don't run at the same time as the import job
+      schedule: "10 19 * * 6",
+      task: {ListenList.Jobs.WeeklyEmailJob, :run, []}
+    ],
     import_releases_friday_to_saturday: [
       # Import every 30 minutes on Thursdays, Fridays, and Saturdays
       # Most new music is released late Thursday / early Friday UTC time.
