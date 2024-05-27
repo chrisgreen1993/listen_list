@@ -24,7 +24,7 @@ defmodule ListenList.Music do
     Repo.all(Release)
   end
 
-  defp get_releases_for_period(start_date, end_date, max_per_period) do
+  defp list_releases_for_period(start_date, end_date, max_per_period) do
     query =
       from r in Release,
         select: [:id, :thumbnail_url, :artist, :album, :score, :post_url, :url, :post_created_at],
@@ -50,7 +50,7 @@ defmodule ListenList.Music do
     # For weeks, we start the week on Thursday as most stuff is released on Fridays
     Time.past_intervals_for_period(DateTime.utc_now(), period, max_periods, :thursday)
     |> Enum.map(fn %{start_date: start_date, end_date: end_date} ->
-      releases = get_releases_for_period(start_date, end_date, max_per_period)
+      releases = list_releases_for_period(start_date, end_date, max_per_period)
 
       %{
         period_type: period,
