@@ -5,6 +5,8 @@ defmodule Mix.Tasks.ImportReleasesFromFile do
 
   require Logger
 
+  @requirements ["app.config"]
+
   @shortdoc "Fetches releases from a reddit dump file and inserts them into the DB"
   def run([file_path | opts]) do
     {:ok, _} = Application.ensure_all_started(:listen_list)
