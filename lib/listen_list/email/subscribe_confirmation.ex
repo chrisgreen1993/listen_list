@@ -9,7 +9,7 @@ defmodule ListenList.Email.SubscribeConfirmation do
 
     new()
     |> to({subscriber.name, subscriber.email})
-    |> from({"Listen List", "notifications@listenlist.app"})
+    |> from({"Listen List", "notifications@mail.listenlist.app"})
     |> subject("Confirm your email | Listen List")
     |> html_body(render(subscriber: subscriber, confirmation_url: confirmation_url))
   end

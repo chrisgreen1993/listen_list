@@ -20,7 +20,7 @@ defmodule ListenList.Email.WeeklyReleases do
 
     new()
     |> to(recipients)
-    |> from({"Listen List", "notifications@listenlist.app"})
+    |> from({"Listen List", "notifications@mail.listenlist.app"})
     |> subject("This week's best new music! | Listen List")
     |> html_body(
       render(base_url: base_url, releases: releases.releases, unsubscribe_url: unsubscribe_url)
