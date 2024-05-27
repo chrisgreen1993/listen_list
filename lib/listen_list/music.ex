@@ -24,6 +24,17 @@ defmodule ListenList.Music do
     Repo.all(Release)
   end
 
+  def list_releases_for_import_status(import_status, limit) do
+    query =
+      from r in Release,
+        select: [:id, :artist, :album, :post_url, :post_raw, :score, :import_status],
+        where: r.import_status == ^import_status,
+        order_by: [desc: r.score],
+        limit: ^limit
+
+    Repo.all(query)
+  end
+
   defp list_releases_for_period(start_date, end_date, max_per_period) do
     query =
       from r in Release,
