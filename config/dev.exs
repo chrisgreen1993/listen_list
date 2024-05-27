@@ -84,3 +84,10 @@ config :swoosh, :api_client, false
 config :listen_list, :reddit_oauth,
   client_id: System.get_env("REDDIT_CLIENT_ID"),
   client_secret: System.get_env("REDDIT_CLIENT_SECRET")
+
+config :listen_list, ListenList.Mailer,
+  adapter: Swoosh.Adapters.Mailgun,
+  api_key: System.get_env("MAILGUN_API_KEY"),
+  domain: System.get_env("MAILGUN_DOMAIN")
+
+config :swoosh, :api_client, Swoosh.ApiClient.Hackney
