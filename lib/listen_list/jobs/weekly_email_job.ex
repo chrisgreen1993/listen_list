@@ -6,17 +6,23 @@ defmodule ListenList.Jobs.WeeklyEmailJob do
   require Logger
 
   def run do
-    subscribers = Subscribers.list_confirmed_subscribers()
-    Logger.info("Sending weekly email to #{length(subscribers)} subscribers")
-    releases = Music.list_top_releases_this_week()
-
-    if releases do
-      subscribers
+    subscribers =
+      Subscribers.list_confirmed_subscribers()
       |> Enum.map(fn subscriber ->
         token = Subscribers.Token.sign_unsubscribe_token(subscriber.id)
-        Email.weekly_releases(subscriber, releases, token)
+
+        %{
+          email: subscriber.email,
+          name: subscriber.name,
+          token: token
+        }
       end)
-      |> Mailer.deliver_many()
+
+    Logger.info("Sending weekly email to #{length(subscribers)} subscribers")
+    releases = Music.list_top_releases_for_weekly_email()
+
+    if releases do
+      Email.weekly_releases(subscribers, releases) |> Mailer.deliver!()
 
       Logger.info("Weekly email sent")
     else

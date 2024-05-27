@@ -46,7 +46,9 @@ defmodule ListenListWeb.ReleaseLive.Index do
     case Subscribers.create_subscriber(%{"name" => name, "email" => email}) do
       {:ok, subscriber} ->
         token = Subscribers.Token.sign_confirm_token(subscriber.id)
-        Email.subscribe_confirmation(subscriber, token) |> Mailer.deliver()
+        email = Email.subscribe_confirmation(subscriber, token)
+        # Deliver async as we don't need to wait around for a response
+        Task.async(fn -> Mailer.deliver(email) end)
 
         {:noreply,
          socket

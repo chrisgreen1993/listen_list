@@ -1,0 +1,24 @@
+<mjml>
+  <mj-head>
+    <mj-title>Confirm Your Email | Listen List</mj-title>
+    <mj-attributes>
+      <mj-all font-family="ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'" />
+      <mj-text font-size="16px" />
+      <mj-button font-size="20px" background-color="rgb(59, 130, 246)" font-weight="bold" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-text align="center" font-size="30px" color="rgb(59, 130, 246)" font-weight="bold">Listen List</mj-text>
+        <mj-divider border-color="rgb(59, 130, 246)" padding-bottom="20px"></mj-divider>
+        <mj-text>Hey
+          <%= @subscriber.name %>!
+        </mj-text>
+        <mj-text>Ready to receive the best new music, straight to your inbox?</mj-text>
+        <mj-text>Click the button below to confirm your email and you'll be all set!</mj-text>
+        <mj-button padding-top="20px" href="<%= @confirmation_url %>">Confirm Email</mj-button>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

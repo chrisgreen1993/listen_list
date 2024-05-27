@@ -61,7 +61,8 @@ defmodule ListenList.MixProject do
       {:httpoison, "~> 2.0"},
       {:html_entities, "~> 0.5"},
       {:timex, "~> 3.0"},
-      {:quantum, "~> 3.0"}
+      {:quantum, "~> 3.0"},
+      {:mjml_eex, "~> 0.10.0"}
     ]
   end
 

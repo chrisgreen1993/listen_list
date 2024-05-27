@@ -1,0 +1,54 @@
+<mjml>
+  <mj-head>
+    <mj-title>This week's best new music! | Listen List</mj-title>
+    <mj-attributes>
+      <mj-all font-family="ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'" />
+      <mj-text font-size="16px" />
+      <mj-button font-size="20px" background-color="rgb(59, 130, 246)" font-weight="bold" />
+    </mj-attributes>
+    <mj-style inline="inline">
+      .primary-blue,
+      .primary-blue div {
+        color: rgb(59, 130, 246) !important;
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-text css-class="primary-blue" align="center" font-size="30px" font-weight="bold">Listen List</mj-text>
+        <mj-divider border-color="rgb(59, 130, 246)" padding-bottom="20px"></mj-divider>
+        <mj-text>Hey %recipient.name%!</mj-text>
+        <mj-text>It's that time of week again! Here's the best new albums this week!</mj-text>
+      </mj-column>
+    </mj-section>
+    <%= for release <- @releases do %>
+      <mj-section>
+        <mj-column width="25%">
+          <mj-image align="left" src="<%= release.thumbnail_url %>" />
+        </mj-column>
+        <mj-column width="75%">
+          <mj-text font-size="20px" font-weight="bold">
+            <a class="primary-blue" href="<%= @base_url %>">
+              <%= release.album %></a>
+          </mj-text>
+          <mj-text font-size="16px" color="rgb(55, 65, 81)">
+            <%= release.artist %>
+          </mj-text>
+        </mj-column>
+      </mj-section>
+    <% end %>
+    <mj-section>
+      <mj-column>
+        <mj-button padding-top="20px" href="<%= @base_url %>">View all new music!</mj-button>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column>
+        <mj-text align="center">
+          <a href="<%= @unsubscribe_url %>%recipient.unsubscribe_token%" class="primary-blue">Unsubscribe</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

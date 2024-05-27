@@ -41,8 +41,8 @@ defmodule ListenList.Music do
   def list_top_releases(:month), do: list_top_releases_grouped_by_period(:month, 20, 12)
   def list_top_releases(:year), do: list_top_releases_grouped_by_period(:year, 50, 4)
 
-  def list_top_releases_this_week() do
-    list_top_releases_grouped_by_period(:week, 10, 1)
+  def list_top_releases_for_weekly_email() do
+    list_top_releases_grouped_by_period(:week, 3, 1)
     |> Enum.at(0)
   end
 
