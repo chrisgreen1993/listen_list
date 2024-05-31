@@ -1,6 +1,6 @@
 defmodule ListenList.Jobs.WeeklyEmailJob do
   alias ListenList.Mailer
-  alias ListenList.Music
+  alias ListenList.Releases
   alias ListenList.Email
   alias ListenList.Subscribers
   require Logger
@@ -19,7 +19,7 @@ defmodule ListenList.Jobs.WeeklyEmailJob do
       end)
 
     Logger.info("Sending weekly email to #{length(subscribers)} subscribers")
-    releases = Music.list_top_releases_for_weekly_email()
+    releases = Releases.list_top_releases_for_weekly_email()
 
     if releases do
       Email.weekly_releases(subscribers, releases) |> Mailer.deliver!()

@@ -1,12 +1,12 @@
 defmodule ListenList.Admin do
-  alias ListenList.Music
+  alias ListenList.Releases
 
   def list_releases_in_review(limit \\ 10, fields \\ []),
     do: list_releases_for_import_status(:in_review, limit, fields)
 
   def list_releases_for_import_status(import_status, limit \\ 10, fields \\ []) do
     releases =
-      Music.list_releases_for_import_status(import_status, limit)
+      Releases.list_releases_for_import_status(import_status, limit)
       |> Enum.map(&fields_to_print(&1, fields))
 
     Scribe.print(releases, width: 200)
@@ -29,14 +29,14 @@ defmodule ListenList.Admin do
   defp take_keys(release, keys), do: Map.take(release, keys)
 
   def reject_release(release_id) do
-    release = Music.get_release!(release_id)
-    Music.update_release(release, %{import_status: :rejected})
+    release = Releases.get_release!(release_id)
+    Releases.update_release(release, %{import_status: :rejected})
     nil
   end
 
   def update_release_album_arist_manual(release_id, artist, album) do
-    release = Music.get_release!(release_id)
-    Music.update_release(release, %{album: album, artist: artist, import_status: :manual})
+    release = Releases.get_release!(release_id)
+    Releases.update_release(release, %{album: album, artist: artist, import_status: :manual})
     nil
   end
 end

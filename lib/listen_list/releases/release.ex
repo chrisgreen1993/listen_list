@@ -1,4 +1,4 @@
-defmodule ListenList.Music.Release do
+defmodule ListenList.Releases.Release do
   use Ecto.Schema
   import Ecto.Changeset
 

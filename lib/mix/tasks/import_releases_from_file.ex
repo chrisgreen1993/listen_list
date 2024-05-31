@@ -1,5 +1,5 @@
 defmodule Mix.Tasks.ImportReleasesFromFile do
-  alias ListenList.Music
+  alias ListenList.Releases
   alias ListenList.Repo
   use Mix.Task
 
@@ -27,7 +27,7 @@ defmodule Mix.Tasks.ImportReleasesFromFile do
             "Attempting to insert #{length(releases)} releases. Starting ID: #{List.first(releases)[:reddit_id]}"
           )
 
-          {changed_rows, _} = Music.create_or_update_releases(releases)
+          {changed_rows, _} = Releases.create_or_update_releases(releases)
           Logger.info("Inserted #{changed_rows} releases")
         end)
       end,

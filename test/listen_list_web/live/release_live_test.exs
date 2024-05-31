@@ -2,7 +2,7 @@ defmodule ListenListWeb.ReleaseLiveTest do
   use ListenListWeb.ConnCase
 
   import Phoenix.LiveViewTest
-  import ListenList.MusicFixtures
+  import ListenList.ReleasesFixtures
 
   defp create_release(_) do
     release = release_fixture()

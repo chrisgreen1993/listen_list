@@ -1,16 +1,16 @@
-defmodule ListenList.Music do
+defmodule ListenList.Releases do
   @moduledoc """
-  The Music context.
+  The Releases context.
   """
 
   import Ecto.Query, warn: false
   alias ListenList.Repo
 
-  alias ListenList.Music.Release
+  alias ListenList.Releases.Release
   alias ListenList.Utils.Time
-  alias ListenList.Music.Macros
+  alias ListenList.Releases.Macros
 
-  require ListenList.Music.Macros
+  require ListenList.Releases.Macros
   require Logger
 
   @doc """

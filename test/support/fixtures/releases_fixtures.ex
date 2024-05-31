@@ -1,7 +1,7 @@
-defmodule ListenList.MusicFixtures do
+defmodule ListenList.ReleasesFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `ListenList.Music` context.
+  entities via the `ListenList.Releases` context.
   """
 
   @doc """
@@ -23,7 +23,7 @@ defmodule ListenList.MusicFixtures do
         import_status: :auto,
         import_type: :api
       })
-      |> ListenList.Music.create_release()
+      |> ListenList.Releases.create_release()
 
     release
   end

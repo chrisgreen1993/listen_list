@@ -1,5 +1,5 @@
-defmodule ListenList.Music.Macros do
-  alias ListenList.Music.Release
+defmodule ListenList.Releases.Macros do
+  alias ListenList.Releases.Release
 
   # Macro to generate the ON CONFLICT clause for the release import
   # The update: parameter doesn't let us to build fragments dynamically,

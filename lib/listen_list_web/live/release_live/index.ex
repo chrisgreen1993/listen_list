@@ -1,7 +1,7 @@
 defmodule ListenListWeb.ReleaseLive.Index do
   use ListenListWeb, :live_view
 
-  alias ListenList.Music
+  alias ListenList.Releases
   alias ListenList.Subscribers
   alias ListenList.Mailer
   alias ListenList.Email
@@ -10,7 +10,7 @@ defmodule ListenListWeb.ReleaseLive.Index do
   def mount(_params, _session, socket) do
     {:ok,
      assign(socket,
-       releases: Music.list_top_releases(:week),
+       releases: Releases.list_top_releases(:week),
        selected_period: :week,
        release: nil,
        subscribe_modal?: false
@@ -27,14 +27,14 @@ defmodule ListenListWeb.ReleaseLive.Index do
   end
 
   def handle_event("change_period", %{"period" => period}, socket) do
-    releases = Music.list_top_releases(String.to_atom(period))
+    releases = Releases.list_top_releases(String.to_atom(period))
 
     {:noreply,
      assign(socket, releases: releases, selected_period: String.to_atom(period), release: nil)}
   end
 
   def handle_event("show_release_modal", %{"id" => id}, socket) do
-    release = Music.get_release!(id)
+    release = Releases.get_release!(id)
     {:noreply, assign(socket, release: release)}
   end
 
