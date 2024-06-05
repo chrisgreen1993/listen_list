@@ -6,9 +6,6 @@
     "inotify-tools@latest"
   ],
   "shell": {
-    "init_hook": [
-      "PROMPT='📦 listen_list '$PROMPT"
-    ],
     "scripts": {
       "test": [
         "echo \"Error: no test specified\" && exit 1"
