@@ -50,16 +50,47 @@ defmodule ListenList.Releases do
     Repo.all(query)
   end
 
-  def list_top_releases(:week), do: list_top_releases_grouped_by_period(:week, 10, 8)
-  def list_top_releases(:month), do: list_top_releases_grouped_by_period(:month, 20, 12)
-  def list_top_releases(:year), do: list_top_releases_grouped_by_period(:year, 50, 4)
+  def list_top_releases(:week) do
+    list_top_releases_grouped_by_period(:week,
+      max_per_period: 10,
+      max_periods: 8
+    )
+  end
+
+  def list_top_releases(:month) do
+    list_top_releases_grouped_by_period(:month,
+      max_per_period: 20,
+      max_periods: 12
+    )
+  end
+
+  def list_top_releases(:year) do
+    list_top_releases_grouped_by_period(:year,
+      max_per_period: 50,
+      max_periods: 4
+    )
+  end
 
   def list_top_releases_for_weekly_email() do
-    list_top_releases_grouped_by_period(:week, 3, 1)
+    list_top_releases_grouped_by_period(:week,
+      max_per_period: 4,
+      max_periods: 1
+    )
     |> Enum.at(0)
   end
 
-  defp list_top_releases_grouped_by_period(period, max_per_period, max_periods) do
+  # Group releases by period (week, month, year) and return the top releases within that period
+  # as well as a start and end date.
+  defp list_top_releases_grouped_by_period(period, opts) do
+    defaults = [min_per_period: 4]
+
+    [min_per_period: min_per_period, max_per_period: max_per_period, max_periods: max_periods] =
+      Keyword.merge(defaults, opts)
+
+    if min_per_period > max_per_period do
+      raise ArgumentError, "min_per_period must not be greater than max_per_period"
+    end
+
     # For weeks, we start the week on Thursday as most stuff is released on Fridays
     Time.past_intervals_for_period(DateTime.utc_now(), period, max_periods, :thursday)
     |> Enum.map(fn %{start_date: start_date, end_date: end_date} ->
@@ -72,7 +103,10 @@ defmodule ListenList.Releases do
         releases: releases
       }
     end)
-    |> Enum.filter(fn %{releases: releases} -> length(releases) > 0 end)
+    |> Enum.filter(fn %{releases: releases} ->
+      # only return periods with enough releases
+      length(releases) >= min_per_period
+    end)
   end
 
   @doc """
