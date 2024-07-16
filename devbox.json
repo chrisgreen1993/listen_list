@@ -1,10 +1,13 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.11.0/.schema/devbox.schema.json",
-  "packages": [
-    "elixir@latest",
-    "postgresql@latest",
-    "inotify-tools@latest"
-  ],
+  "packages": {
+    "elixir":     "latest",
+    "postgresql": "latest",
+    "inotify-tools": {
+      "version":            "latest",
+      "excluded_platforms": ["aarch64-darwin"]
+    }
+  },
   "shell": {
     "scripts": {
       "test": [

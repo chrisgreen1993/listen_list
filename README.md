@@ -21,11 +21,17 @@ devbox install
 # enter the devbox
 devbox shell
 
+# Create postgres db and user
+initdb -D .devbox/virtenv/postgresql/data
+createuser -s postgres
+
 # Set your env vars in .env.dev
 cp .env.template .env.dev
 source .env.dev
 
 # Install deps, setup DB etc
+# On Mac you may need to do this to compile the filesystem watcher:
+# https://elixirforum.com/t/cant-find-executable-mac-listener-error-exited-in-genserver-call/8886/18
 mix setup
 
 # Run the server (localhost:4000)
