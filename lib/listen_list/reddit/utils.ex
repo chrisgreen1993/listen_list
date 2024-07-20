@@ -1,4 +1,5 @@
 defmodule ListenList.Reddit.Utils do
+  alias ListenList.Reddit.Embed
   @new_release_identifier "[FRESH ALBUM]"
 
   # Not a great way to decide, but it's all we've got
@@ -9,7 +10,6 @@ defmodule ListenList.Reddit.Utils do
   defp release_field_mappers do
     %{
       "id" => &%{reddit_id: &1},
-      "title" => &title_to_artist_and_album/1,
       "url" => &%{url: remove_invalid_url(&1)},
       "score" => &%{score: &1},
       "permalink" => &%{post_url: "https://reddit.com" <> &1},
@@ -34,9 +34,8 @@ defmodule ListenList.Reddit.Utils do
 
   defp valid_post_title?(title), do: String.starts_with?(title, @new_release_identifier)
 
-  # Extract the artist and album from the title
-  # If we can extract the artist and album, we set import_status to auto
-  # If we can't, we set import_status to in_review
+  # Extract the artist and album from the post title
+  # The title should be in the format "[FRESH ALBUM] Artist - Album"
   defp title_to_artist_and_album(title) do
     title
     |> String.replace(@new_release_identifier, "")
@@ -45,10 +44,10 @@ defmodule ListenList.Reddit.Utils do
     |> String.split(@artist_album_delimiter)
     |> case do
       [artist, album] when is_binary(artist) and is_binary(album) ->
-        %{artist: artist, album: album, import_status: :auto}
+        %{artist: artist, album: album}
 
       _ ->
-        %{artist: nil, album: nil, import_status: :in_review}
+        nil
     end
   end
 
@@ -68,6 +67,27 @@ defmodule ListenList.Reddit.Utils do
     %{post_created_at: post_created_at}
   end
 
+  # Extract artist and album from the post
+  # First, if the post has an embed from a supported provider, extract the album details from the description.
+  # If there is no embed, or the provider is not supported, or the embed description cannot be parsed, extract the artist and album from the title.
+  defp extract_artist_and_album(post) do
+    embed = post["secure_media"]["oembed"]
+
+    maybe_album_details =
+      with true <- Embed.supported_provider?(embed),
+           %{} = album_details <- Embed.extract_album_details(embed) do
+        album_details
+      else
+        _ ->
+          title_to_artist_and_album(post["title"])
+      end
+
+    case maybe_album_details do
+      nil -> %{artist: nil, album: nil, import_status: :in_review}
+      %{artist: artist, album: album} -> %{artist: artist, album: album, import_status: :auto}
+    end
+  end
+
   def post_to_release(post, import_type) do
     Enum.reduce(release_field_mappers(), %{}, fn {k, function}, acc ->
       if value = Map.get(post, k) do
@@ -76,6 +96,7 @@ defmodule ListenList.Reddit.Utils do
         acc
       end
     end)
+    |> Map.merge(extract_artist_and_album(post))
     |> Map.merge(%{post_raw: post, import_type: import_type})
   end
 end

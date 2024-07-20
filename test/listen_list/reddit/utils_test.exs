@@ -62,6 +62,48 @@ defmodule ListenList.Reddit.UtilsTest do
       assert release[:artist] == "Artist"
     end
 
+    test "returns a release with the artist and album extracted from the embed data if it is Spotify" do
+      embed_desc = "Listen to Embed Album on Spotify. Embed Artist · Album · 2024 · 11 songs."
+      embed_data = %{"oembed" => %{"provider_name" => "Spotify", "description" => embed_desc}}
+
+      release = Utils.post_to_release(post_fixture(%{"secure_media" => embed_data}), :api)
+      assert release_has_expected_keys?(release)
+      assert release[:album] == "Embed Album"
+      assert release[:artist] == "Embed Artist"
+    end
+
+    test "returns a release with the artist and album extracted from the embed data if it is BandCamp" do
+      embed_desc = "Embed Album by Embed Artist, released 24 May 2024 1. Track One 2. Track Two."
+      embed_data = %{"oembed" => %{"provider_name" => "BandCamp", "description" => embed_desc}}
+
+      release = Utils.post_to_release(post_fixture(%{"secure_media" => embed_data}), :api)
+      assert release_has_expected_keys?(release)
+      assert release[:album] == "Embed Album"
+      assert release[:artist] == "Embed Artist"
+    end
+
+    test "returns a release with the album and artist from the title field if the embed provider is not supported" do
+      embed_desc = "Embed Album by Embed Artist"
+      embed_data = %{"oembed" => %{"provider_name" => "YouTube", "description" => embed_desc}}
+
+      release = Utils.post_to_release(post_fixture(%{"secure_media" => embed_data}), :api)
+      assert release_has_expected_keys?(release)
+      assert release[:album] == "Album"
+      assert release[:artist] == "Artist"
+    end
+
+    test "returns the album and artist from the title field if the embed description cannpt be parsed" do
+      embed_desc =
+        "Embed Album INCORRECT Embed Artist, released 24 May 2024 1. Track One 2. Track Two."
+
+      embed_data = %{"oembed" => %{"provider_name" => "BandCamp", "description" => embed_desc}}
+
+      release = Utils.post_to_release(post_fixture(%{"secure_media" => embed_data}), :api)
+      assert release_has_expected_keys?(release)
+      assert release[:album] == "Album"
+      assert release[:artist] == "Artist"
+    end
+
     test "returns a release with the original post data in post_raw" do
       post = post_fixture()
       release = Utils.post_to_release(post, :api)

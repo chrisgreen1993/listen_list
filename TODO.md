@@ -4,7 +4,7 @@
 
 [] More complex logic around detecting valid posts [feat]
     [] E.g (Artist- Album) (Artist -- Album)
-    [] Can we extract more data out of the raw post
+    [x] Can we extract more data out of the raw post
      - Spotify embed description has this format: Listen to [ALBUM] on Spotify. [ARTIST] · Album · 2024 · 11 songs.",
      - Bandcamp embed description has this format: [ALBUM] by [ARTIST], released 24 May 2024 [NUMBERED LIST OF TRACKS]
 
