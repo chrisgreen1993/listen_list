@@ -2,8 +2,19 @@
 
 ## In progress
 
-[] More complex logic around detecting valid posts [feat]
-    [] E.g (Artist- Album) (Artist -- Album)
+## Next
+
+[] See more releases for each period on a seperate page [feat]
+
+## Backlog
+
+[] Add r/hiphopheads and r/popheads
+[] Save functionality (localstorage initially?)
+
+## Done
+
+[x] More complex logic around detecting valid posts [feat]
+    [x] E.g (Artist- Album) (Artist -- Album)
     [x] Can we extract more data out of the raw post
      - Spotify embed description has these formats: 
        - Listen to [ALBUM] on Spotify. [ARTIST] · [TYPE] · 2024 · 11 songs.
@@ -11,19 +22,7 @@
      - Bandcamp embed description has these formats: 
         - [ALBUM] by [ARTIST], released 24 May 2024[NUMBERED LIST OF TRACKS]
         - [ALBUM] by [ARTIST], releases 24 May 2024 [NUMBERED LIST OF TRACKS]
-    [] Update existing releases that are in review with album and artist from embed.
-
-
-## Next
-
-## Backlog
-
-[] Add r/hiphopheads and r/popheads
-[] See more releases for each period (a seperate page?) [feat]
-[] Save functionality (localstorage initially?)
-
-## Done
-
+    [x] Update existing releases that are in review with album and artist from embed.
 [x] Refactor Music context [refactor]
     [] Move queries within module? (I think it's fine as is rn)
     [x] Rename context to Releases?
