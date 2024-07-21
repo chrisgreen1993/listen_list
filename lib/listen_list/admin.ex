@@ -1,5 +1,9 @@
 defmodule ListenList.Admin do
+  alias ListenList.Reddit.Utils
   alias ListenList.Releases
+  alias ListenList.Repo
+
+  require Logger
 
   def list_releases_in_review(limit \\ 10, fields \\ []),
     do: list_releases_for_import_status(:in_review, limit, fields)
@@ -38,5 +42,32 @@ defmodule ListenList.Admin do
     release = Releases.get_release!(release_id)
     Releases.update_release(release, %{album: album, artist: artist, import_status: :manual})
     nil
+  end
+
+  def update_releases_for_import_status_from_post(import_status, limit \\ 10, chunk_size \\ 200) do
+    releases_in_review = Releases.list_releases_for_import_status(import_status, limit)
+
+    Logger.info("Updating #{length(releases_in_review)} releases in review")
+
+    releases =
+      Enum.map(releases_in_review, &Utils.post_to_release(&1.post_raw, &1.import_type))
+
+    Repo.transaction(fn ->
+      Enum.chunk_every(releases, chunk_size)
+      |> Enum.each(fn releases_chunk ->
+        Logger.info(
+          "Attempting to insert #{length(releases_chunk)} releases. Starting ID: #{List.first(releases_chunk)[:reddit_id]}"
+        )
+
+        {changed_rows, _} = Releases.create_or_update_releases(releases_chunk)
+        Logger.info("Inserted #{changed_rows} releases")
+      end)
+    end)
+  end
+
+  def update_release_from_post(id) do
+    release = Releases.get_release!(id)
+    updated_release = Utils.post_to_release(release.post_raw, release.import_type)
+    Releases.create_or_update_releases([updated_release])
   end
 end

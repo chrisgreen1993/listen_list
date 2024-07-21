@@ -29,7 +29,7 @@ defmodule ListenList.Releases do
   def list_releases_for_import_status(import_status, limit) do
     query =
       from r in Release,
-        select: [:id, :artist, :album, :post_url, :post_raw, :score, :import_status],
+        select: [:id, :artist, :album, :post_url, :post_raw, :score, :import_status, :import_type],
         where: r.import_status == ^import_status,
         order_by: [desc: r.score],
         limit: ^limit
