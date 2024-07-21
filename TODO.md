@@ -8,8 +8,9 @@
 
 ## Backlog
 
-[] Add r/hiphopheads and r/popheads
-[] Save functionality (localstorage initially?)
+[] Display all release periods (infinite scroll / pagination) [feat]
+[] Add r/hiphopheads and r/popheads [feat]
+[] Save functionality (localstorage initially?) [feat]
 
 ## Done
 
