@@ -11,15 +11,24 @@ defmodule ListenList.Reddit.Embed do
         "provider_name" => unquote(@providers[:spotify]),
         "description" => description
       }) do
-    regex = ~r/Listen to (?<album>.+?) on Spotify\. (?<artist>.+?) · /
+    # Spotify can have two different formats for the description
+    # The newer format: "Listen to Album on Spotify. Artist · Album · 2024 · 11 songs."
+    # The older format: "Album, an album by Artist on Spotify"
+    # We try to match both formats
+    regexes = [
+      ~r/Listen to (?<album>.+) on Spotify\. (?<artist>.+?) · /,
+      ~r/(?<album>.+), an? .+? by (?<artist>.+?) on Spotify/
+    ]
 
-    case Regex.named_captures(regex, description) do
-      %{"album" => album, "artist" => artist} ->
-        %{album: album, artist: artist}
+    Enum.reduce_while(regexes, nil, fn regex, _ ->
+      case Regex.named_captures(regex, description) do
+        %{"album" => album, "artist" => artist} ->
+          {:halt, %{album: album, artist: artist}}
 
-      _ ->
-        nil
-    end
+        _ ->
+          {:cont, nil}
+      end
+    end)
   end
 
   def extract_album_details(%{
