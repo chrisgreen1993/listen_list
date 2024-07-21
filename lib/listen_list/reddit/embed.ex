@@ -35,7 +35,7 @@ defmodule ListenList.Reddit.Embed do
         "provider_name" => unquote(@providers[:bandcamp]),
         "description" => description
       }) do
-    regex = ~r/(?<album>.+) by (?<artist>.+), released/
+    regex = ~r/(?<album>.+) by (?<artist>.+), release(s|d)/
 
     case Regex.named_captures(regex, description) do
       %{"album" => album, "artist" => artist} ->

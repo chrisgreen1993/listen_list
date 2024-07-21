@@ -54,9 +54,19 @@ defmodule ListenList.Reddit.EmbedTest do
       assert Embed.extract_album_details(embed) == expected
     end
 
-    test "extracts album and artist if the embed provider is BandCamp" do
+    test "extracts album and artist if the embed provider is BandCamp and the album has been released" do
       embed_desc =
         "Embed Album 123!!! by Embed Artist 123!!!, released 24 May 2024 1. Track One 2. Track Two."
+
+      embed = %{"provider_name" => "BandCamp", "description" => embed_desc}
+      expected = %{album: "Embed Album 123!!!", artist: "Embed Artist 123!!!"}
+
+      assert Embed.extract_album_details(embed) == expected
+    end
+
+    test "extracts album and artist if the embed provider is BandCamp and the album has yet to be released" do
+      embed_desc =
+        "Embed Album 123!!! by Embed Artist 123!!!, releases 24 May 2024 1. Track One 2. Track Two."
 
       embed = %{"provider_name" => "BandCamp", "description" => embed_desc}
       expected = %{album: "Embed Album 123!!!", artist: "Embed Artist 123!!!"}
