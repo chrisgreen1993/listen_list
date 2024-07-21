@@ -14,9 +14,19 @@ defmodule ListenList.Reddit.EmbedTest do
   end
 
   describe "extract_album_details" do
-    test "extracts album and artist if the embed provider is Spotify" do
+    test "extracts album and artist if the embed provider is Spotify and the release is an album" do
       embed_desc =
         "Listen to Embed Album 123!!! on Spotify. Embed Artist 123!!! · Album · 2024 · 11 songs."
+
+      embed = %{"provider_name" => "Spotify", "description" => embed_desc}
+      expected = %{album: "Embed Album 123!!!", artist: "Embed Artist 123!!!"}
+
+      assert Embed.extract_album_details(embed) == expected
+    end
+
+    test "extracts album and artist if the embed provider is Spotify and the release is an Ep" do
+      embed_desc =
+        "Listen to Embed Album 123!!! on Spotify. Embed Artist 123!!! · Ep · 2024 · 11 songs."
 
       embed = %{"provider_name" => "Spotify", "description" => embed_desc}
       expected = %{album: "Embed Album 123!!!", artist: "Embed Artist 123!!!"}

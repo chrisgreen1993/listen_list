@@ -11,7 +11,7 @@ defmodule ListenList.Reddit.Embed do
         "provider_name" => unquote(@providers[:spotify]),
         "description" => description
       }) do
-    regex = ~r/Listen to (?<album>.+) on Spotify\. (?<artist>.+) · Album/
+    regex = ~r/Listen to (?<album>.+?) on Spotify\. (?<artist>.+?) · /
 
     case Regex.named_captures(regex, description) do
       %{"album" => album, "artist" => artist} ->
