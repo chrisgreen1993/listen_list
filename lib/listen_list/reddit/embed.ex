@@ -20,8 +20,10 @@ defmodule ListenList.Reddit.Embed do
       ~r/(?<album>.+), an? .+? by (?<artist>.+?) on Spotify/
     ]
 
+    decoded_description = HtmlEntities.decode(description)
+
     Enum.reduce_while(regexes, nil, fn regex, _ ->
-      case Regex.named_captures(regex, description) do
+      case Regex.named_captures(regex, decoded_description) do
         %{"album" => album, "artist" => artist} ->
           {:halt, %{album: album, artist: artist}}
 
@@ -36,8 +38,9 @@ defmodule ListenList.Reddit.Embed do
         "description" => description
       }) do
     regex = ~r/(?<album>.+) by (?<artist>.+), release(s|d)/
+    decoded_description = HtmlEntities.decode(description)
 
-    case Regex.named_captures(regex, description) do
+    case Regex.named_captures(regex, decoded_description) do
       %{"album" => album, "artist" => artist} ->
         %{album: album, artist: artist}
 
