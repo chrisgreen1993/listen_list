@@ -70,8 +70,8 @@ defmodule ListenList.Reddit.API do
 
         releases =
           posts
-          |> Enum.filter(&Post.valid_post?(&1["data"]))
-          |> Enum.map(&Post.post_to_release(&1["data"], :api))
+          |> Enum.filter(&Post.valid?(&1["data"]))
+          |> Enum.map(&Post.build_release(&1["data"], :api))
 
         if next_after do
           # add the after param so we can fetch the next page of results

@@ -16,20 +16,20 @@ defmodule ListenList.Reddit.Post do
     }
   end
 
-  def remove_invalid_url(url) do
+  defp remove_invalid_url(url) do
     uri = URI.parse(url)
     valid? = uri.scheme != nil && uri.host =~ "."
     if valid?, do: url, else: nil
   end
 
   # Check that the title is valid and that the post has not been removed
-  def valid_post?(%{"removed_by_category" => removed_by_category, "title" => title}) do
-    valid_post_title?(title) && is_nil(removed_by_category)
+  def valid?(%{"removed_by_category" => removed_by_category, "title" => title}) do
+    valid_title?(title) && is_nil(removed_by_category)
   end
 
-  def valid_post?(%{"title" => title}), do: valid_post_title?(title)
+  def valid?(%{"title" => title}), do: valid_title?(title)
 
-  defp valid_post_title?(title), do: String.starts_with?(title, @new_release_identifier)
+  defp valid_title?(title), do: String.starts_with?(title, @new_release_identifier)
 
   # Extract the artist and album from the post title
   # The title should be in the format "[FRESH ALBUM] Artist - Album"
@@ -98,7 +98,7 @@ defmodule ListenList.Reddit.Post do
     end
   end
 
-  def post_to_release(post, import_type) do
+  def build_release(post, import_type) do
     Enum.reduce(release_field_mappers(), %{}, fn {k, function}, acc ->
       if value = Map.get(post, k) do
         Map.merge(acc, function.(value))

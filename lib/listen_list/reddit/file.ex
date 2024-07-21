@@ -9,8 +9,8 @@ defmodule ListenList.Reddit.File do
 
     file_path
     |> create_json_stream()
-    |> Stream.filter(&Post.valid_post?(&1))
-    |> Stream.map(&Post.post_to_release(&1, :file))
+    |> Stream.filter(&Post.valid?(&1))
+    |> Stream.map(&Post.build_release(&1, :file))
     |> maybe_limit(limit)
     |> Stream.chunk_every(chunk_size)
   end
