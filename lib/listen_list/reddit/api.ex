@@ -5,7 +5,7 @@ defmodule ListenList.Reddit.API do
 
   alias HTTPoison
   alias HtmlEntities
-  alias ListenList.Reddit.Utils
+  alias ListenList.Reddit.Post
   require Logger
 
   @user_agent "listenlist-reddit"
@@ -15,7 +15,7 @@ defmodule ListenList.Reddit.API do
   @subreddit_search_endpoint "https://oauth.reddit.com/r/indieheads/search"
 
   @default_api_options [
-    q: "self:no" <> Utils.new_release_identifier(),
+    q: "self:no" <> Post.new_release_identifier(),
     restrict_sr: "on",
     sort: "new",
     limit: 100,
@@ -70,8 +70,8 @@ defmodule ListenList.Reddit.API do
 
         releases =
           posts
-          |> Enum.filter(&Utils.valid_post?(&1["data"]))
-          |> Enum.map(&Utils.post_to_release(&1["data"], :api))
+          |> Enum.filter(&Post.valid_post?(&1["data"]))
+          |> Enum.map(&Post.post_to_release(&1["data"], :api))
 
         if next_after do
           # add the after param so we can fetch the next page of results

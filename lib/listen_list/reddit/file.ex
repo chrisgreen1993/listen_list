@@ -1,5 +1,5 @@
 defmodule ListenList.Reddit.File do
-  alias ListenList.Reddit.Utils
+  alias ListenList.Reddit.Post
 
   # fetch releases from a reddit dump file in chunks
   # We use a stream here as the dump files are huge and we don't want to run out of memory
@@ -9,8 +9,8 @@ defmodule ListenList.Reddit.File do
 
     file_path
     |> create_json_stream()
-    |> Stream.filter(&Utils.valid_post?(&1))
-    |> Stream.map(&Utils.post_to_release(&1, :file))
+    |> Stream.filter(&Post.valid_post?(&1))
+    |> Stream.map(&Post.post_to_release(&1, :file))
     |> maybe_limit(limit)
     |> Stream.chunk_every(chunk_size)
   end

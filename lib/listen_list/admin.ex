@@ -1,5 +1,5 @@
 defmodule ListenList.Admin do
-  alias ListenList.Reddit.Utils
+  alias ListenList.Reddit.Post
   alias ListenList.Releases
   alias ListenList.Repo
 
@@ -50,7 +50,7 @@ defmodule ListenList.Admin do
     Logger.info("Updating #{length(releases_in_review)} releases in review")
 
     releases =
-      Enum.map(releases_in_review, &Utils.post_to_release(&1.post_raw, &1.import_type))
+      Enum.map(releases_in_review, &Post.post_to_release(&1.post_raw, &1.import_type))
 
     Repo.transaction(fn ->
       Enum.chunk_every(releases, chunk_size)
@@ -67,7 +67,7 @@ defmodule ListenList.Admin do
 
   def update_release_from_post(id) do
     release = Releases.get_release!(id)
-    updated_release = Utils.post_to_release(release.post_raw, release.import_type)
+    updated_release = Post.post_to_release(release.post_raw, release.import_type)
     Releases.create_or_update_releases([updated_release])
   end
 end

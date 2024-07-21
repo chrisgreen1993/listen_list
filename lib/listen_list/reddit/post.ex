@@ -1,4 +1,4 @@
-defmodule ListenList.Reddit.Utils do
+defmodule ListenList.Reddit.Post do
   alias ListenList.Reddit.Embed
   @new_release_identifier "[FRESH ALBUM]"
 
