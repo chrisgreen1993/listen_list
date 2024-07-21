@@ -64,26 +64,6 @@ defmodule ListenList.Reddit.EmbedTest do
       assert Embed.extract_album_details(embed) == expected
     end
 
-    test "extracts album and artist if the embed provider is BandCamp and the album has been released" do
-      embed_desc =
-        "Embed Album 123!!! by Embed Artist 123!!!, released 24 May 2024 1. Track One 2. Track Two."
-
-      embed = %{"provider_name" => "BandCamp", "description" => embed_desc}
-      expected = %{album: "Embed Album 123!!!", artist: "Embed Artist 123!!!"}
-
-      assert Embed.extract_album_details(embed) == expected
-    end
-
-    test "extracts album and artist if the embed provider is BandCamp and the album has yet to be released" do
-      embed_desc =
-        "Embed Album 123!!! by Embed Artist 123!!!, releases 24 May 2024 1. Track One 2. Track Two."
-
-      embed = %{"provider_name" => "BandCamp", "description" => embed_desc}
-      expected = %{album: "Embed Album 123!!!", artist: "Embed Artist 123!!!"}
-
-      assert Embed.extract_album_details(embed) == expected
-    end
-
     test "returns nil if the embed provider is supported but the description cannot be parsed" do
       embed_desc =
         "Embed Album INCORRECT Embed Artist, released 24 May 2024 1. Track One 2. Track Two."
@@ -97,11 +77,21 @@ defmodule ListenList.Reddit.EmbedTest do
       assert Embed.extract_album_details(provider_info) == nil
     end
 
-    test "extracts album and artist if the embed provider is BandCamp and the description is HTML encoded" do
-      embed_desc =
-        "Embed Album&#39;s 123!!! by Embed Artist&#39;s 123!!!, released 24 May 2024 1. Track One 2. Track Two."
+    test "extracts album and artist from the title if the embed provider is BandCamp" do
+      embed_title =
+        "Embed Album 123!!!, by Embed Artist 123!!!"
 
-      embed = %{"provider_name" => "BandCamp", "description" => embed_desc}
+      embed = %{"provider_name" => "BandCamp", "title" => embed_title}
+      expected = %{album: "Embed Album 123!!!", artist: "Embed Artist 123!!!"}
+
+      assert Embed.extract_album_details(embed) == expected
+    end
+
+    test "extracts album and artist if the embed provider is BandCamp and the title is HTML encoded" do
+      embed_title =
+        "Embed Album&#39;s 123!!!, by Embed Artist&#39;s 123!!!"
+
+      embed = %{"provider_name" => "BandCamp", "title" => embed_title}
       expected = %{album: "Embed Album's 123!!!", artist: "Embed Artist's 123!!!"}
 
       assert Embed.extract_album_details(embed) == expected

@@ -66,8 +66,8 @@ defmodule ListenList.Reddit.UtilsTest do
     end
 
     test "returns a release with the artist and album extracted from the embed data if it is BandCamp" do
-      embed_desc = "Embed Album by Embed Artist, released 24 May 2024 1. Track One 2. Track Two."
-      embed_data = %{"oembed" => %{"provider_name" => "BandCamp", "description" => embed_desc}}
+      embed_title = "Embed Album, by Embed Artist"
+      embed_data = %{"oembed" => %{"provider_name" => "BandCamp", "title" => embed_title}}
 
       release = Utils.post_to_release(post_fixture(%{"secure_media" => embed_data}), :api)
       assert release_has_expected_keys?(release)

@@ -35,12 +35,12 @@ defmodule ListenList.Reddit.Embed do
 
   def extract_album_details(%{
         "provider_name" => unquote(@providers[:bandcamp]),
-        "description" => description
+        "title" => title
       }) do
-    regex = ~r/(?<album>.+) by (?<artist>.+), release(s|d)/
-    decoded_description = HtmlEntities.decode(description)
+    regex = ~r/(?<album>.+), by (?<artist>.+)/
+    decoded_title = HtmlEntities.decode(title)
 
-    case Regex.named_captures(regex, decoded_description) do
+    case Regex.named_captures(regex, decoded_title) do
       %{"album" => album, "artist" => artist} ->
         %{album: album, artist: artist}
 
