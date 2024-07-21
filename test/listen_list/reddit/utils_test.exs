@@ -2,6 +2,41 @@ defmodule ListenList.Reddit.UtilsTest do
   use ExUnit.Case
   alias ListenList.Reddit.Utils
 
+  def release_has_expected_keys?(release) do
+    expected_keys = [
+      :reddit_id,
+      :artist,
+      :album,
+      :url,
+      :score,
+      :post_url,
+      :post_created_at,
+      :thumbnail_url,
+      :post_raw,
+      :import_status,
+      :import_type,
+      :embed
+    ]
+
+    expected_keys |> Enum.all?(&Map.has_key?(release, &1))
+  end
+
+  def post_fixture(overrides \\ %{}) do
+    Map.merge(
+      %{
+        "id" => "123",
+        "title" => "[FRESH ALBUM] Artist - Album ",
+        "url" => "https://reddit.com",
+        "score" => 100,
+        "permalink" => "/r/indieheads/123",
+        "created_utc" => 1_614_556_800,
+        "thumbnail" => "https://thumbnail.com",
+        "secure_media" => %{"oembed" => %{"html" => "<iframe></iframe>"}}
+      },
+      overrides
+    )
+  end
+
   describe "valid_post?" do
     test "returns true if the post has a valid identifier and delimeter" do
       post = %{"title" => "[FRESH ALBUM] Artist - Album", "removed_by_category" => nil}
@@ -20,48 +55,6 @@ defmodule ListenList.Reddit.UtilsTest do
   end
 
   describe "post_to_release" do
-    def release_has_expected_keys?(release) do
-      expected_keys = [
-        :reddit_id,
-        :artist,
-        :album,
-        :url,
-        :score,
-        :post_url,
-        :post_created_at,
-        :thumbnail_url,
-        :post_raw,
-        :import_status,
-        :import_type,
-        :embed
-      ]
-
-      expected_keys |> Enum.all?(&Map.has_key?(release, &1))
-    end
-
-    def post_fixture(overrides \\ %{}) do
-      Map.merge(
-        %{
-          "id" => "123",
-          "title" => "[FRESH ALBUM] Artist - Album ",
-          "url" => "https://reddit.com",
-          "score" => 100,
-          "permalink" => "/r/indieheads/123",
-          "created_utc" => 1_614_556_800,
-          "thumbnail" => "https://thumbnail.com",
-          "secure_media" => %{"oembed" => %{"html" => "<iframe></iframe>"}}
-        },
-        overrides
-      )
-    end
-
-    test "returns a release with the title transformed into artist and album" do
-      release = Utils.post_to_release(post_fixture(), :api)
-      assert release_has_expected_keys?(release)
-      assert release[:album] == "Album"
-      assert release[:artist] == "Artist"
-    end
-
     test "returns a release with the artist and album extracted from the embed data if it is Spotify" do
       embed_desc = "Listen to Embed Album on Spotify. Embed Artist · Album · 2024 · 11 songs."
       embed_data = %{"oembed" => %{"provider_name" => "Spotify", "description" => embed_desc}}
@@ -160,14 +153,7 @@ defmodule ListenList.Reddit.UtilsTest do
       assert release[:import_status] == :in_review
     end
 
-    test "returns a release with import_status as :in_review if there is more than one delimeter" do
-      post = post_fixture(%{"title" => "[FRESH ALBUM] Artist - ??? - Album"})
-      release = Utils.post_to_release(post, :api)
-      assert release_has_expected_keys?(release)
-      assert release[:import_status] == :in_review
-    end
-
-    test "returns a release with import_status as :in_review if the fdelimeter isn't valid" do
+    test "returns a release with import_status as :in_review if the delimeter isn't valid" do
       post = post_fixture(%{"title" => "[FRESH ALBUM] Artist -Album"})
       release = Utils.post_to_release(post, :api)
       assert release_has_expected_keys?(release)
@@ -208,5 +194,59 @@ defmodule ListenList.Reddit.UtilsTest do
       assert release_has_expected_keys?(release)
       assert release[:url] == nil
     end
+  end
+
+  describe "post_to_release title parsing" do
+    @title_test_cases [
+      %{
+        title: "[FRESH ALBUM] Artist \u002D Album 1",
+        expected_artist: "Artist",
+        expected_album: "Album 1"
+      },
+      %{
+        title: "[FRESH ALBUM] Artist \u2014 Album 2",
+        expected_artist: "Artist",
+        expected_album: "Album 2"
+      },
+      %{
+        title: "[FRESH ALBUM] Artist \u2013 Album 3",
+        expected_artist: "Artist",
+        expected_album: "Album 3"
+      },
+      %{
+        title: "[FRESH ALBUM] Artist \u002D\u002D Album 4",
+        expected_artist: "Artist",
+        expected_album: "Album 4"
+      },
+      %{
+        title: "[FRESH ALBUM] Artist \u2014\u2014 Album 5",
+        expected_artist: "Artist",
+        expected_album: "Album 5"
+      },
+      %{
+        title: "[FRESH ALBUM] Artist \u2013\u2013 Album 6",
+        expected_artist: "Artist",
+        expected_album: "Album 6"
+      },
+      %{
+        title: "[FRESH ALBUM] Artist-Thing \u002D Album \u002D More Stuff",
+        expected_artist: "Artist-Thing",
+        expected_album: "Album - More Stuff"
+      }
+    ]
+
+    Enum.each(@title_test_cases, fn %{
+                                      title: title,
+                                      expected_artist: artist,
+                                      expected_album: album
+                                    } ->
+      test "returns a release with the title transformed into artist and album for '#{title}'" do
+        post = post_fixture(%{"title" => unquote(title)})
+        release = Utils.post_to_release(post, :api)
+        assert release_has_expected_keys?(release)
+        assert release[:album] == unquote(album)
+        assert release[:artist] == unquote(artist)
+      end
+    end)
   end
 end

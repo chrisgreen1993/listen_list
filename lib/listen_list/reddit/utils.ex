@@ -2,9 +2,6 @@ defmodule ListenList.Reddit.Utils do
   alias ListenList.Reddit.Embed
   @new_release_identifier "[FRESH ALBUM]"
 
-  # Not a great way to decide, but it's all we've got
-  @artist_album_delimiter " - "
-
   def new_release_identifier, do: @new_release_identifier
 
   defp release_field_mappers do
@@ -36,14 +33,27 @@ defmodule ListenList.Reddit.Utils do
 
   # Extract the artist and album from the post title
   # The title should be in the format "[FRESH ALBUM] Artist - Album"
-  defp title_to_artist_and_album(title) do
-    title
-    |> String.replace(@new_release_identifier, "")
-    |> String.trim()
-    |> HtmlEntities.decode()
-    |> String.split(@artist_album_delimiter)
-    |> case do
-      [artist, album] when is_binary(artist) and is_binary(album) ->
+  # where - can be any type of unicode dash
+  def title_to_artist_and_album(title) do
+    cleaned_title =
+      title
+      |> String.replace(@new_release_identifier, "")
+      |> String.trim()
+      |> HtmlEntities.decode()
+
+    # Match the delimeter between artist and album, this can be any type od unicode dash
+    # either once or twice, with at least one spaceon each side
+    delimiter_regex_string = "\\s+\\p{Pd}{1,2}\\s+"
+
+    # This matches the artist and album, with the artist being non-greedy
+    # so that it stops at the first occurence of the delimiter
+    # Note that this is not ideal, as an artist name could contain a match for the delimiter,
+    # therefore causing us to put artist information in the album field.
+    # However, it is more likely that the album name will contain delimeter matches than the artist name.
+    regex = ~r/(?<artist>.+?)#{delimiter_regex_string}(?<album>.+)/u
+
+    case Regex.named_captures(regex, cleaned_title) do
+      %{"artist" => artist, "album" => album} ->
         %{artist: artist, album: album}
 
       _ ->
