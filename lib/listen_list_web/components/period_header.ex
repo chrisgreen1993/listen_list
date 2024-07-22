@@ -1,5 +1,6 @@
 defmodule ListenListWeb.Components.PeriodHeader do
   use Phoenix.Component
+  use ListenListWeb, :verified_routes
 
   attr :period, :string
   attr :period_start_date, :string
@@ -14,7 +15,7 @@ defmodule ListenListWeb.Components.PeriodHeader do
       </h2>
       <%= if @view_all_link? do %>
         <% period_path =
-          "/releases?period=#{@period}&start=#{@period_start_date}&end=#{@period_end_date}" %>
+          ~p"/releases?period=#{@period}&start=#{@period_start_date}&end=#{@period_end_date}" %>
         <.link
           class="pt-2 sm:pt-0 text-blue-500 font-bold underline text-xl md:text-2xl"
           navigate={period_path}
