@@ -17,7 +17,7 @@ defmodule ListenListWeb.Components.SubscribeModal do
         <.input name="name" label="Name" placeholder="Name" value="" required />
         <.input type="email" name="email" label="Email" placeholder="Email" value="" required />
         <:actions>
-          <.button phx-click="show_subscribe_modal">
+          <.button>
             Sign me up!
           </.button>
         </:actions>
