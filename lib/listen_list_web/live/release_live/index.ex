@@ -18,6 +18,14 @@ defmodule ListenListWeb.ReleaseLive.Index do
   end
 
   @impl true
+  def handle_params(params, _url, socket) do
+    period = Map.get(params, "period", "week") |> String.to_atom()
+    releases = Releases.list_top_releases(period)
+
+    {:noreply, assign(socket, releases: releases, selected_period: period)}
+  end
+
+  @impl true
   def handle_event("show_subscribe_modal", _params, socket) do
     {:noreply, assign(socket, subscribe_modal?: true)}
   end
@@ -27,10 +35,7 @@ defmodule ListenListWeb.ReleaseLive.Index do
   end
 
   def handle_event("change_period", %{"period" => period}, socket) do
-    releases = Releases.list_top_releases(String.to_atom(period))
-
-    {:noreply,
-     assign(socket, releases: releases, selected_period: String.to_atom(period), release: nil)}
+    {:noreply, push_patch(socket, to: ~p"/?period=#{period}")}
   end
 
   def handle_event("show_release_modal", %{"id" => id}, socket) do
