@@ -4,7 +4,7 @@ defmodule ListenListWeb.Components.PeriodHeader do
   attr :period, :string
   attr :period_start_date, :string
   attr :period_end_date, :string
-  attr :last_period?, :boolean
+  attr :view_all_link?, :boolean, default: false
 
   def period_header(assigns) do
     ~H"""
@@ -12,17 +12,15 @@ defmodule ListenListWeb.Components.PeriodHeader do
       <h2 id={@period_end_date} class="font-bold text-xl md:text-3xl">
         <%= humanize_releases_period_date(@period_start_date, @period_end_date, @period) %>
       </h2>
-      <%= if @last_period? do %>
-        <a class="pt-2 sm:pt-0 text-blue-500 font-bold underline text-xl md:text-2xl" href="#">
-          Back to top ↑
-        </a>
-      <% else %>
-        <a
+      <%= if @view_all_link? do %>
+        <% period_path =
+          "/releases?period=#{@period}&start=#{@period_start_date}&end=#{@period_end_date}" %>
+        <.link
           class="pt-2 sm:pt-0 text-blue-500 font-bold underline text-xl md:text-2xl"
-          href={"##{@period_start_date}"}
+          navigate={period_path}
         >
-          Previous <%= @period %> ↓
-        </a>
+          View all →
+        </.link>
       <% end %>
     </div>
     """

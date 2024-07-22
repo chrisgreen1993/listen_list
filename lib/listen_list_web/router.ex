@@ -18,6 +18,7 @@ defmodule ListenListWeb.Router do
     pipe_through :browser
 
     live "/", ReleaseLive.Index, :index
+    live "/releases", ReleaseLive.Period, :index
     get "/subscribers/confirm/:token", SubscriberController, :confirm
     get "/subscribers/unsubscribe/:token", SubscriberController, :unsubscribe
   end

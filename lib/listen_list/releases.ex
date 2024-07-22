@@ -37,7 +37,7 @@ defmodule ListenList.Releases do
     Repo.all(query)
   end
 
-  defp list_releases_for_period(start_date, end_date, max_per_period) do
+  def list_releases_for_period(start_date, end_date, max_per_period) do
     query =
       from r in Release,
         select: [:id, :thumbnail_url, :artist, :album, :score, :post_url, :url, :post_created_at],
@@ -52,22 +52,22 @@ defmodule ListenList.Releases do
 
   def list_top_releases(:week) do
     list_top_releases_grouped_by_period(:week,
-      max_per_period: 10,
-      max_periods: 8
+      max_per_period: 5,
+      max_periods: 12
     )
   end
 
   def list_top_releases(:month) do
     list_top_releases_grouped_by_period(:month,
-      max_per_period: 20,
+      max_per_period: 5,
       max_periods: 12
     )
   end
 
   def list_top_releases(:year) do
     list_top_releases_grouped_by_period(:year,
-      max_per_period: 50,
-      max_periods: 4
+      max_per_period: 10,
+      max_periods: 10
     )
   end
 

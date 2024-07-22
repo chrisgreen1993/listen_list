@@ -1,0 +1,22 @@
+<div class="flex justify-center py-8">
+  <.button phx-click="show_subscribe_modal">
+    <.icon name="hero-envelope" class="mr-2 align-bottom" /> Email me new music
+  </.button>
+</div>
+
+<.period_header period={@period} period_start_date={@start_date} period_end_date={@end_date} />
+
+<div class="py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+  <!-- 
+  We lazy load cards that aren't in the first 10 as they will most likely be below the fold 
+  -->
+  <.release_card
+    :for={{release, inx} <- Enum.with_index(@releases)}
+    release={release}
+    on_click="show_release_modal"
+    lazy_load?={inx >= 10}
+  />
+</div>
+
+<.subscribe_modal :if={@subscribe_modal?} on_cancel="hide_subscribe_modal" />
+<.release_modal :if={@release} release={@release} on_cancel="hide_release_modal" />
