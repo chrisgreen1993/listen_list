@@ -2,8 +2,6 @@ defmodule ListenListWeb.ReleaseLive.Period do
   use ListenListWeb, :live_view
   alias ListenList.Releases
   alias ListenList.Subscribers
-  alias ListenList.Mailer
-  alias ListenList.Email
 
   @impl true
   def mount(%{"start" => start, "end" => end_, "period" => period}, _session, socket) do
@@ -47,13 +45,11 @@ defmodule ListenListWeb.ReleaseLive.Period do
   end
 
   def handle_event("create_subscriber", %{"name" => name, "email" => email}, socket) do
-    case Subscribers.create_subscriber(%{"name" => name, "email" => email}) do
-      {:ok, subscriber} ->
-        token = Subscribers.Token.sign_confirm_token(subscriber.id)
-        email = Email.subscribe_confirmation(subscriber, token)
-        # Deliver async as we don't need to wait around for a response
-        Task.async(fn -> Mailer.deliver(email) end)
-
+    case Subscribers.create_subscriber_and_send_confirmation_email(%{
+           "name" => name,
+           "email" => email
+         }) do
+      {:ok, _subscriber} ->
         {:noreply,
          socket
          |> assign(:subscribe_modal?, false)

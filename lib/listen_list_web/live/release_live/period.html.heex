@@ -18,5 +18,9 @@
   />
 </div>
 
-<.subscribe_modal :if={@subscribe_modal?} on_cancel="hide_subscribe_modal" />
+<.subscribe_modal
+  :if={@subscribe_modal?}
+  on_cancel="hide_subscribe_modal"
+  on_submit="create_subscriber"
+/>
 <.release_modal :if={@release} release={@release} on_cancel="hide_release_modal" />

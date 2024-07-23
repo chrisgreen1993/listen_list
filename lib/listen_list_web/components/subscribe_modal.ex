@@ -5,6 +5,7 @@ defmodule ListenListWeb.Components.SubscribeModal do
   import ListenListWeb.CoreComponents
 
   attr :on_cancel, :string
+  attr :on_submit, :string
 
   def subscribe_modal(assigns) do
     ~H"""
@@ -13,7 +14,7 @@ defmodule ListenListWeb.Components.SubscribeModal do
       <p class="mb-4">
         Enter your details and we'll send you a weekly email with the best new music
       </p>
-      <.simple_form for={nil} phx-submit="create_subscriber" class="max-w-sm">
+      <.simple_form for={nil} phx-submit={JS.push(@on_submit)} class="max-w-sm">
         <.input name="name" label="Name" placeholder="Name" value="" required />
         <.input type="email" name="email" label="Email" placeholder="Email" value="" required />
         <:actions>

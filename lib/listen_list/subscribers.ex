@@ -8,6 +8,8 @@ defmodule ListenList.Subscribers do
 
   alias ListenList.Subscribers.Subscriber
   alias ListenList.Subscribers.Token
+  alias ListenList.Email
+  alias ListenList.Mailer
 
   @doc """
   Returns the list of subscribers.
@@ -61,6 +63,21 @@ defmodule ListenList.Subscribers do
       conflict_target: :email,
       on_conflict: {:replace_all_except, [:inserted_at, :id]}
     )
+  end
+
+  def create_subscriber_and_send_confirmation_email(attrs \\ %{}) do
+    case create_subscriber(attrs) do
+      {:ok, subscriber} ->
+        token = Token.sign_confirm_token(subscriber.id)
+        email = Email.subscribe_confirmation(subscriber, token)
+        # Deliver async as we don't need to wait around for a response
+        Task.async(fn -> Mailer.deliver(email) end)
+
+        {:ok, subscriber}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   def confirm_subscriber_by_token(token) do
