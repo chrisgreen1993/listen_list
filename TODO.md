@@ -4,16 +4,17 @@
 
 ## Next
 
-[] See more releases for each period on a seperate page [feat]
+[] Display all release periods (infinite scroll / pagination) [feat]
+
 
 ## Backlog
 
-[] Display all release periods (infinite scroll / pagination) [feat]
 [] Add r/hiphopheads and r/popheads [feat]
 [] Save functionality (localstorage initially?) [feat]
 
 ## Done
 
+[x] See more releases for each period on a seperate page [feat]
 [x] More complex logic around detecting valid posts [feat]
     [x] E.g (Artist- Album) (Artist -- Album)
     [x] Can we extract more data out of the raw post
