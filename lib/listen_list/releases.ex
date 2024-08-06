@@ -50,29 +50,23 @@ defmodule ListenList.Releases do
     Repo.all(query)
   end
 
-  def list_top_releases(:week) do
-    list_top_releases_grouped_by_period(:week,
-      max_per_period: 5,
-      max_periods: 12
-    )
-  end
+  def list_top_releases(period) when period in [:week, :month, :year] do
+    opts =
+      case period do
+        :week -> [max_per_period: 5, max_periods: 12]
+        :month -> [max_per_period: 5, max_periods: 12]
+        :year -> [max_per_period: 10, max_periods: 10]
+      end
 
-  def list_top_releases(:month) do
-    list_top_releases_grouped_by_period(:month,
-      max_per_period: 5,
-      max_periods: 12
-    )
-  end
-
-  def list_top_releases(:year) do
-    list_top_releases_grouped_by_period(:year,
-      max_per_period: 10,
-      max_periods: 10
-    )
+    DateTime.utc_now()
+    |> Time.end_of_release_period(period)
+    |> list_top_releases_grouped_by_period(period, opts)
   end
 
   def list_top_releases_for_weekly_email() do
-    list_top_releases_grouped_by_period(:week,
+    DateTime.utc_now()
+    |> Time.end_of_release_period(:week)
+    |> list_top_releases_grouped_by_period(:week,
       max_per_period: 4,
       max_periods: 1
     )
@@ -81,7 +75,7 @@ defmodule ListenList.Releases do
 
   # Group releases by period (week, month, year) and return the top releases within that period
   # as well as a start and end date.
-  defp list_top_releases_grouped_by_period(period, opts) do
+  def list_top_releases_grouped_by_period(start_date, period, opts) do
     defaults = [min_per_period: 4]
 
     [min_per_period: min_per_period, max_per_period: max_per_period, max_periods: max_periods] =
@@ -91,8 +85,7 @@ defmodule ListenList.Releases do
       raise ArgumentError, "min_per_period must not be greater than max_per_period"
     end
 
-    # For weeks, we start the week on Thursday as most stuff is released on Fridays
-    Time.past_intervals_for_period(DateTime.utc_now(), period, max_periods, :thursday)
+    Time.past_intervals_for_period(start_date, period, max_periods)
     |> Enum.map(fn %{start_date: start_date, end_date: end_date} ->
       releases = list_releases_for_period(start_date, end_date, max_per_period)
 
