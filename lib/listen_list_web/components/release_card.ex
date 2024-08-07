@@ -4,10 +4,11 @@ defmodule ListenListWeb.Components.ReleaseCard do
   attr :release, :map
   attr :on_click, :string
   attr :lazy_load?, :boolean, default: false
+  attr :rest, :global
 
   def release_card(assigns) do
     ~H"""
-    <div class="rounded overflow-hidden shadow-lg">
+    <div class="rounded overflow-hidden shadow-lg" {@rest}>
       <.link class="flex flex-col h-full" phx-click={@on_click} phx-value-id={@release.id}>
         <%= if @release.thumbnail_url do %>
           <img

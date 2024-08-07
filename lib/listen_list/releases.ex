@@ -37,15 +37,17 @@ defmodule ListenList.Releases do
     Repo.all(query)
   end
 
-  def list_releases_for_period(start_date, end_date, max_per_period) do
+  def list_releases_for_period(start_date, end_date, limit, offset \\ 0) do
     query =
       from r in Release,
         select: [:id, :thumbnail_url, :artist, :album, :score, :post_url, :url, :post_created_at],
         where: r.import_status in [:manual, :auto],
         where: r.post_created_at >= ^start_date,
         where: r.post_created_at < ^end_date,
-        order_by: [desc: r.score],
-        limit: ^max_per_period
+        # Use id so we have consistent ordering for the same scores
+        order_by: [desc: r.score, asc: r.id],
+        limit: ^limit,
+        offset: ^offset
 
     Repo.all(query)
   end

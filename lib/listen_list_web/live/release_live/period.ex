@@ -7,18 +7,19 @@ defmodule ListenListWeb.ReleaseLive.Period do
   def mount(%{"start" => start, "end" => end_, "period" => period}, _session, socket) do
     start_date = Timex.parse!(start, "{ISOdate}")
     end_date = Timex.parse!(end_, "{ISOdate}")
-    # TODO: add pagination / infinite scroll
-    releases = Releases.list_releases_for_period(start_date, end_date, 100)
 
     {:ok,
-     assign(socket,
-       releases: releases,
+     socket
+     |> assign(
        period: String.to_atom(period),
        start_date: start_date,
        end_date: end_date,
+       page: 1,
+       per_page: 20,
        release: nil,
        subscribe_modal?: false
-     )}
+     )
+     |> paginate_releases(1)}
   end
 
   # Redirect home if we don't have the correct params
@@ -26,7 +27,59 @@ defmodule ListenListWeb.ReleaseLive.Period do
     {:ok, redirect(socket, to: "/")}
   end
 
+  defp paginate_releases(socket, new_page) when new_page >= 1 do
+    %{per_page: per_page, page: cur_page, start_date: start_date, end_date: end_date} =
+      socket.assigns
+
+    releases =
+      Releases.list_releases_for_period(
+        start_date,
+        end_date,
+        per_page,
+        (new_page - 1) * per_page
+      )
+
+    # Number of releases the stream keeps around in the DOM
+    stream_limit = per_page * 3
+
+    {releases, at, limit} =
+      if new_page >= cur_page do
+        {releases, -1, stream_limit * -1}
+      else
+        {Enum.reverse(releases), 0, stream_limit}
+      end
+
+    case releases do
+      [] ->
+        assign(socket, end_of_releases?: at == -1)
+
+      [_ | _] = releases ->
+        socket
+        |> assign(end_of_releases?: false)
+        |> assign(:page, new_page)
+        |> stream(:releases, releases, at: at, limit: limit)
+    end
+  end
+
   @impl true
+  def handle_event("next_page", _, socket) do
+    {:noreply, paginate_releases(socket, socket.assigns.page + 1)}
+  end
+
+  # If the user immediately returns the scrollbar to the top we
+  # reset to the first page
+  def handle_event("prev_page", %{"_overran" => true}, socket) do
+    {:noreply, paginate_releases(socket, 1)}
+  end
+
+  def handle_event("prev_page", _, socket) do
+    if socket.assigns.page > 1 do
+      {:noreply, paginate_releases(socket, socket.assigns.page - 1)}
+    else
+      {:noreply, socket}
+    end
+  end
+
   def handle_event("show_release_modal", %{"id" => id}, socket) do
     release = Releases.get_release!(id)
     {:noreply, assign(socket, release: release)}

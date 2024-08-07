@@ -6,15 +6,23 @@
 
 <.period_header period={@period} period_start_date={@start_date} period_end_date={@end_date} />
 
-<div class="py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-  <!-- 
-  We lazy load cards that aren't in the first 10 as they will most likely be below the fold 
-  -->
+<div
+  id="releases"
+  phx-update="stream"
+  phx-viewport-top={@page > 1 && "prev_page"}
+  phx-viewport-bottom={!@end_of_releases? && "next_page"}
+  phx-page-loading
+  class={[
+    "py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4",
+    !@end_of_releases? && "pb-[calc(200vh)]",
+    @page > 1 && "pt-[calc(200vh)]"
+  ]}
+>
   <.release_card
-    :for={{release, inx} <- Enum.with_index(@releases)}
+    :for={{dom_id, release} <- @streams.releases}
+    id={dom_id}
     release={release}
     on_click="show_release_modal"
-    lazy_load?={inx >= 10}
   />
 </div>
 
