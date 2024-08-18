@@ -52,19 +52,6 @@ defmodule ListenList.Releases do
     Repo.all(query)
   end
 
-  def list_top_releases(period) when period in [:week, :month, :year] do
-    opts =
-      case period do
-        :week -> [max_per_period: 5, max_periods: 12]
-        :month -> [max_per_period: 5, max_periods: 12]
-        :year -> [max_per_period: 10, max_periods: 10]
-      end
-
-    DateTime.utc_now()
-    |> Time.end_of_release_period(period)
-    |> list_top_releases_grouped_by_period(period, opts)
-  end
-
   def list_top_releases_for_weekly_email() do
     DateTime.utc_now()
     |> Time.end_of_release_period(:week)
