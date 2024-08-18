@@ -14,27 +14,36 @@
   />
 </form>
 
-<%= for {%{period_start: period_start, period_end: period_end, releases: releases}, inx} <- Enum.with_index(@releases) do %>
-  <.period_header
-    period={@selected_period}
-    period_start_date={period_start}
-    period_end_date={period_end}
-    view_all_link?
-  />
-
-  <div class="py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-    <!-- 
-    We lazy load cards that aren't in the first period 
-    as they will be in the viewport immediately
-    -->
-    <.release_card
-      :for={release <- releases}
-      release={release}
-      on_click="show_release_modal"
-      lazy_load?={inx > 0}
+<div
+  id="releases"
+  phx-update="stream"
+  phx-viewport-top={!@start_of_releases? && "prev_periods"}
+  phx-viewport-bottom={!@end_of_releases? && "next_periods"}
+  phx-page-loading
+  class={[
+    !@start_of_releases? && "pt-[calc(200vh)]",
+    !@end_of_releases? && "pb-[calc(200vh)]"
+  ]}
+>
+  <div
+    :for={
+      {dom_id, %{period_start: period_start, period_end: period_end, releases: releases}} <-
+        @streams.releases
+    }
+    id={dom_id}
+  >
+    <.period_header
+      period={@selected_period}
+      period_start_date={period_start}
+      period_end_date={period_end}
+      view_all_link?
     />
+
+    <div class="py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <.release_card :for={release <- releases} release={release} on_click="show_release_modal" />
+    </div>
   </div>
-<% end %>
+</div>
 
 <.subscribe_modal
   :if={@subscribe_modal?}
