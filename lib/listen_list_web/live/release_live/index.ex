@@ -38,7 +38,7 @@ defmodule ListenListWeb.ReleaseLive.Index do
       if DateTime.compare(current_start_date, start_date) in [:gt, :eq] do
         {releases, -1, stream_limit * -1}
       else
-        {Enum.reverse(releases), 0, stream_limit * 3}
+        {Enum.reverse(releases), 0, stream_limit}
       end
 
     at_start? =
