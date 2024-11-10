@@ -1,6 +1,6 @@
 # Listen List 🎸🎧
 
-[listenlist.app](https://listenist.app)
+[listenlist.app](https://listenlist.app)
 
 An app for discovering new music from [reddit.com/r/indieheads](https://reddit.com/r/indieheads)
 
