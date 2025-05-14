@@ -30,7 +30,7 @@ defmodule ListenList.Reddit.PostTest do
         "score" => 100,
         "permalink" => "/r/indieheads/123",
         "created_utc" => 1_614_556_800,
-        "thumbnail" => "https://thumbnail.com",
+        "thumbnail" => "https://thumbnail.com/12345.jpeg",
         "secure_media" => %{"oembed" => %{"html" => "<iframe></iframe>"}}
       },
       overrides
@@ -129,7 +129,7 @@ defmodule ListenList.Reddit.PostTest do
       post = post_fixture()
       release = Post.build_release(post, :api)
       assert release_has_expected_keys?(release)
-      assert release[:thumbnail_url] == "https://thumbnail.com"
+      assert release[:thumbnail_url] == "https://thumbnail.com/12345.jpeg"
     end
 
     test "returns a release with thumbnail_url as nil if the url is invalid" do
@@ -137,6 +137,19 @@ defmodule ListenList.Reddit.PostTest do
       release = Post.build_release(post, :api)
       assert release_has_expected_keys?(release)
       assert release[:thumbnail_url] == nil
+    end
+
+    test "returns a release with thumbnail_url decoded if it contains html entities" do
+      post =
+        post_fixture(%{
+          "thumbnail" => "https://thumbnail.com/123456.jpeg?param1=value1&amp;param2=value2"
+        })
+
+      release = Post.build_release(post, :api)
+      assert release_has_expected_keys?(release)
+
+      assert release[:thumbnail_url] ==
+               "https://thumbnail.com/123456.jpeg?param1=value1&param2=value2"
     end
 
     test "returns a release with import_status as :auto if the title has a delimeter" do
