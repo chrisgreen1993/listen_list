@@ -1,8 +1,13 @@
 {
   "lockfile_version": "1",
   "packages": {
+    "darwin.apple_sdk.frameworks.CoreServices": {
+      "resolved": "github:NixOS/nixpkgs/fe51d34885f7b5e3e7b59572796e1bcb427eccb1?narHash=sha256-qmmFCrfBwSHoWw7cVK4Aj%2Bfns%2Bc54EBP8cGqp%2FyK410%3D#darwin.apple_sdk.frameworks.CoreServices",
+      "source": "nixpkg"
+    },
     "elixir@latest": {
       "last_modified": "2024-05-23T08:10:22Z",
+      "plugin_version": "0.0.1",
       "resolved": "github:NixOS/nixpkgs/3305b2b25e4ae4baee872346eae133cf6f611783#elixir",
       "source": "devbox-search",
       "version": "1.16.3",
@@ -48,6 +53,10 @@
           "store_path": "/nix/store/vah2w1gcg20qkrr4j3b2v4xjxnrv496s-elixir-1.16.3"
         }
       }
+    },
+    "github:NixOS/nixpkgs/nixpkgs-unstable": {
+      "last_modified": "2025-05-22T23:55:03Z",
+      "resolved": "github:NixOS/nixpkgs/fe51d34885f7b5e3e7b59572796e1bcb427eccb1?lastModified=1747958103&narHash=sha256-qmmFCrfBwSHoWw7cVK4Aj%2Bfns%2Bc54EBP8cGqp%2FyK410%3D"
     },
     "inotify-tools@latest": {
       "last_modified": "2024-05-22T06:18:38Z",
